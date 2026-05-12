@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Login — Total Logistics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="top-strip">
+    <strong>TOTAL LOGISTICS</strong>
+    <div>
+      <a href="/">← Visitor site</a>
+    </div>
+  </div>
+  <div class="shell" style="max-width:440px">
+    <div class="card" style="margin-top:32px">
+      <h1>Portal login</h1>
+      <p style="color:var(--gray);margin:0 0 20px;font-size:0.95rem">Client, manager, or super admin access.</p>
+      <div id="err" class="err" style="display:none"></div>
+      <form id="f">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required />
+        <label for="pw">Password</label>
+        <input id="pw" type="password" autocomplete="current-password" required />
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:4px">Sign in</button>
+      </form>
+      <p style="font-size:0.82rem;color:var(--gray);margin-top:18px;line-height:1.5">
+        Demo accounts (after <code style="background:var(--light);padding:2px 6px;border-radius:4px">npm start</code>):<br />
+        client@tll.com.bd / client123<br />
+        manager@tll.com.bd / manager123<br />
+        superadmin@tll.com.bd / admin123
+      </p>
+    </div>
+  </div>
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('err');
+      err.style.display = 'none';
+      try {
+        const data = await TLL.api('/api/auth/login', {
+          method: 'POST',
+          body: {
+            email: document.getElementById('email').value,
+            password: document.getElementById('pw').value,
+          },
+        });
+        TLL.setToken(data.token);
+        TLL.redirectForRole(data.user.role);
+      } catch (ex) {
+        err.textContent = ex.message || 'Login failed';
+        err.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

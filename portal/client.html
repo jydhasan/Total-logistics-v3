@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Portal — Total Logistics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="top-strip">
+    <strong>CLIENT PORTAL</strong>
+    <div>
+      <span id="who" style="margin-right:16px;font-size:0.88rem"></span>
+      <a href="/">Site</a> ·
+      <a href="#" id="logout">Logout</a>
+    </div>
+  </div>
+  <div class="shell">
+    <div id="gate" class="err" style="display:none"></div>
+    <div class="tabs">
+      <button type="button" class="active" data-tab="ship">Shipment progress</button>
+      <button type="button" data-tab="msg">Messages</button>
+      <button type="button" data-tab="news">Company updates</button>
+    </div>
+    <section id="tab-ship"></section>
+    <section id="tab-msg" style="display:none"></section>
+    <section id="tab-news" style="display:none"></section>
+  </div>
+  <script src="common.js"></script>
+  <script>
+    (async function () {
+      const gate = document.getElementById('gate');
+      if (!TLL.getToken()) {
+        window.location.href = '/portal/login.html';
+        return;
+      }
+      let me;
+      try {
+        me = await TLL.api('/api/me');
+      } catch {
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+        return;
+      }
+      if (me.user.role !== 'client') {
+        gate.textContent = 'This area is for clients only.';
+        gate.style.display = 'block';
+        return;
+      }
+      document.getElementById('who').textContent = me.user.name;
+      document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+      });
+
+      document.querySelectorAll('.tabs button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const t = btn.getAttribute('data-tab');
+          document.getElementById('tab-ship').style.display = t === 'ship' ? 'block' : 'none';
+          document.getElementById('tab-msg').style.display = t === 'msg' ? 'block' : 'none';
+          document.getElementById('tab-news').style.display = t === 'news' ? 'block' : 'none';
+        });
+      });
+
+      async function loadShipments() {
+        const { shipments } = await TLL.api('/api/client/shipments');
+        const el = document.getElementById('tab-ship');
+        if (!shipments.length) {
+          el.innerHTML = '<div class="card"><p>No active shipments yet.</p></div>';
+          return;
+        }
+        el.innerHTML = shipments
+          .map((s) => {
+            const rows = s.stages
+              .map(
+                (st, i) =>
+                  `<div class="tl-row ${st.completed ? 'done' : ''}"><span class="tl-dot"></span><div><strong>${st.label}</strong><div style="font-size:0.8rem;color:var(--gray)">Step ${i + 1}</div></div></div>`
+              )
+              .join('');
+            return `<div class="card"><h2>${s.title}</h2><p style="color:var(--gray);font-size:0.9rem;margin:0 0 8px">Ref: <strong>${s.trackingRef}</strong></p><p style="font-size:0.88rem;margin-bottom:12px">${s.description || ''}</p><p style="font-size:0.78rem;color:var(--gray)">Last update: ${new Date(s.updatedAt).toLocaleString()}</p><div class="timeline" style="margin-top:16px">${rows}</div></div>`;
+          })
+          .join('');
+      }
+
+      async function loadMessages() {
+        const { messages } = await TLL.api('/api/client/messages');
+        const el = document.getElementById('tab-msg');
+        const bubbles = messages
+          .map((m) => {
+            const mine = m.senderId === me.user.id;
+            const file =
+              m.filePath &&
+              `<div style="margin-top:8px"><a href="/${m.filePath}" target="_blank" rel="noopener">📎 ${m.fileName || 'Attachment'}</a></div>`;
+            return `<div class="bubble ${mine ? 'me' : 'them'}">${m.body.replace(/</g, '&lt;')}${file || ''}<div class="meta">${new Date(m.createdAt).toLocaleString()}</div></div>`;
+          })
+          .join('');
+        el.innerHTML = `<div class="card"><h2>Your account manager</h2><div class="msg-list">${bubbles || '<p style="color:var(--gray)">No messages yet.</p>'}</div>
+          <form id="send" class="row" style="margin-top:12px;flex-direction:column;align-items:stretch">
+            <textarea id="mbody" placeholder="Write a message…"></textarea>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <input type="file" id="mfile" />
+              <button class="btn btn-primary" type="submit">Send</button>
+            </div>
+          </form></div>`;
+        document.getElementById('send').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const fd = new FormData();
+          fd.append('body', document.getElementById('mbody').value);
+          const f = document.getElementById('mfile').files[0];
+          if (f) fd.append('file', f);
+          await TLL.api('/api/client/messages', { method: 'POST', body: fd });
+          document.getElementById('mbody').value = '';
+          document.getElementById('mfile').value = '';
+          loadMessages();
+        });
+      }
+
+      async function loadNews() {
+        const { notifications } = await TLL.api('/api/client/notifications');
+        const el = document.getElementById('tab-news');
+        el.innerHTML = notifications.length
+          ? notifications
+              .map(
+                (n) =>
+                  `<div class="card"><h2>${n.title.replace(/</g, '&lt;')}</h2><p style="white-space:pre-wrap">${n.body.replace(/</g, '&lt;')}</p><p class="meta" style="margin-top:10px">${new Date(n.createdAt).toLocaleString()}</p></div>`
+              )
+              .join('')
+          : '<div class="card"><p>No announcements yet.</p></div>';
+      }
+
+      await loadShipments();
+      await loadMessages();
+      await loadNews();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manager Dashboard — Total Logistics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="top-strip">
+    <strong>MANAGER DASHBOARD</strong>
+    <div>
+      <span id="who" style="margin-right:16px;font-size:0.88rem"></span>
+      <a href="/">Site</a> ·
+      <a href="#" id="logout">Logout</a>
+    </div>
+  </div>
+  <div class="shell">
+    <div id="gate" class="err" style="display:none"></div>
+    <div class="tabs">
+      <button type="button" class="active" data-tab="ship">Shipments &amp; progress</button>
+      <button type="button" data-tab="msg">Client messages</button>
+    </div>
+    <section id="tab-ship"></section>
+    <section id="tab-msg" style="display:none"></section>
+  </div>
+  <script src="common.js"></script>
+  <script>
+    (async function () {
+      if (!TLL.getToken()) {
+        window.location.href = '/portal/login.html';
+        return;
+      }
+      let me;
+      try {
+        me = await TLL.api('/api/me');
+      } catch {
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+        return;
+      }
+      if (me.user.role !== 'manager') {
+        document.getElementById('gate').textContent = 'Managers only.';
+        document.getElementById('gate').style.display = 'block';
+        return;
+      }
+      document.getElementById('who').textContent = me.user.name;
+      document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+      });
+
+      document.querySelectorAll('.tabs button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const t = btn.getAttribute('data-tab');
+          document.getElementById('tab-ship').style.display = t === 'ship' ? 'block' : 'none';
+          document.getElementById('tab-msg').style.display = t === 'msg' ? 'block' : 'none';
+        });
+      });
+
+      async function loadShipments() {
+        const { shipments } = await TLL.api('/api/manager/shipments');
+        const el = document.getElementById('tab-ship');
+        if (!shipments.length) {
+          el.innerHTML = '<div class="card"><p>No shipments assigned.</p></div>';
+          return;
+        }
+        const d = await TLL.api('/api/manager/clients');
+        const clientMap = Object.fromEntries(d.clients.map((c) => [c.id, c.name]));
+        el.innerHTML = shipments
+          .map((s) => {
+            const nextIdx = s.stages.findIndex((st) => !st.completed);
+            const rows = s.stages
+              .map(
+                (st, i) =>
+                  `<div class="tl-row ${st.completed ? 'done' : ''}"><span class="tl-dot"></span><div><strong>${st.label}</strong></div></div>`
+              )
+              .join('');
+            return `<div class="card" data-ship="${s.id}"><h2>${s.title}</h2><p style="color:var(--gray);font-size:0.9rem">Client: <strong>${clientMap[s.clientId] || s.clientId}</strong> · Ref ${s.trackingRef}</p><div class="timeline" style="margin:14px 0">${rows}</div>
+              <button class="btn btn-accent btn-next" data-id="${s.id}" ${nextIdx < 0 ? 'disabled' : ''}>Mark next stage complete</button>
+              <p style="font-size:0.78rem;color:var(--gray);margin-top:8px">Or set explicitly: ${s.stages
+                .map(
+                  (_st, i) =>
+                    `<button type="button" class="btn btn-ghost btn-stage" data-id="${s.id}" data-idx="${i}" style="padding:6px 10px;font-size:0.78rem;margin:4px 4px 0 0">Step ${i + 1}</button>`
+                )
+                .join('')}</p></div>`;
+          })
+          .join('');
+
+        el.querySelectorAll('.btn-next').forEach((b) => {
+          b.addEventListener('click', async () => {
+            const id = b.getAttribute('data-id');
+            await TLL.api('/api/manager/shipments/' + id, { method: 'PATCH', body: { nextStage: true } });
+            loadShipments();
+          });
+        });
+        el.querySelectorAll('.btn-stage').forEach((b) => {
+          b.addEventListener('click', async () => {
+            const id = b.getAttribute('data-id');
+            const idx = +b.getAttribute('data-idx');
+            await TLL.api('/api/manager/shipments/' + id, { method: 'PATCH', body: { completeStageIndex: idx } });
+            loadShipments();
+          });
+        });
+      }
+
+      let clients = [];
+      async function loadClients() {
+        const d = await TLL.api('/api/manager/clients');
+        clients = d.clients;
+        const sel = document.getElementById('clientSel');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">Select client…</option>' + clients.map((c) => `<option value="${c.id}">${c.name} (${c.email})</option>`).join('');
+      }
+
+      async function loadMsgPanel() {
+        const el = document.getElementById('tab-msg');
+        el.innerHTML = `<div class="card"><label for="clientSel">Client</label><select id="clientSel"></select><div id="thread" style="margin-top:16px"></div></div>`;
+        await loadClients();
+        const sel = document.getElementById('clientSel');
+        sel.addEventListener('change', async () => {
+          const cid = sel.value;
+          const thread = document.getElementById('thread');
+          if (!cid) {
+            thread.innerHTML = '';
+            return;
+          }
+          const { messages, client } = await TLL.api('/api/manager/messages?clientId=' + encodeURIComponent(cid));
+          const bubbles = messages
+            .map((m) => {
+              const mine = m.senderId === me.user.id;
+              const file =
+                m.filePath &&
+                `<div style="margin-top:8px"><a href="/${m.filePath}" target="_blank" rel="noopener">📎 ${m.fileName || 'Attachment'}</a></div>`;
+              return `<div class="bubble ${mine ? 'me' : 'them'}">${m.body.replace(/</g, '&lt;')}${file || ''}<div class="meta">${new Date(m.createdAt).toLocaleString()}</div></div>`;
+            })
+            .join('');
+          thread.innerHTML = `<h2>Thread — ${client.name}</h2><div class="msg-list">${bubbles || '<p style="color:var(--gray)">No messages.</p>'}</div>
+            <form id="msend" style="margin-top:12px">
+              <textarea id="mbody" placeholder="Reply to client…"></textarea>
+              <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;align-items:center">
+                <input type="file" id="mfile" />
+                <button class="btn btn-primary" type="submit">Send</button>
+              </div>
+            </form>`;
+          document.getElementById('msend').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData();
+            fd.append('clientId', cid);
+            fd.append('body', document.getElementById('mbody').value);
+            const f = document.getElementById('mfile').files[0];
+            if (f) fd.append('file', f);
+            await TLL.api('/api/manager/messages', { method: 'POST', body: fd });
+            sel.dispatchEvent(new Event('change'));
+          });
+        });
+      }
+
+      await loadShipments();
+      await loadMsgPanel();
+    })();
+  </script>
+</body>
+</html>

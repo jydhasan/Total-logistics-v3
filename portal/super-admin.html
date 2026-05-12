@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Admin — Total Logistics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="top-strip">
+    <strong>SUPER ADMIN</strong>
+    <div>
+      <span id="who" style="margin-right:16px;font-size:0.88rem"></span>
+      <a href="/">Site</a> ·
+      <a href="#" id="logout">Logout</a>
+    </div>
+  </div>
+  <div class="shell">
+    <div id="gate" class="err" style="display:none"></div>
+    <div class="tabs">
+      <button type="button" class="active" data-tab="note">Broadcast to clients</button>
+      <button type="button" data-tab="users">Users &amp; assignments</button>
+      <button type="button" data-tab="ship">Create shipment</button>
+      <button type="button" data-tab="cv">Career applications</button>
+    </div>
+    <section id="tab-note"></section>
+    <section id="tab-users" style="display:none"></section>
+    <section id="tab-ship" style="display:none"></section>
+    <section id="tab-cv" style="display:none"></section>
+  </div>
+  <script src="common.js"></script>
+  <script>
+    (async function () {
+      if (!TLL.getToken()) {
+        window.location.href = '/portal/login.html';
+        return;
+      }
+      let me;
+      try {
+        me = await TLL.api('/api/me');
+      } catch {
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+        return;
+      }
+      if (me.user.role !== 'superadmin') {
+        document.getElementById('gate').textContent = 'Super administrators only.';
+        document.getElementById('gate').style.display = 'block';
+        return;
+      }
+      document.getElementById('who').textContent = me.user.name;
+      document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+      });
+
+      document.querySelectorAll('.tabs button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const t = btn.getAttribute('data-tab');
+          ['note', 'users', 'ship', 'cv'].forEach((x) => {
+            document.getElementById('tab-' + x).style.display = x === t ? 'block' : 'none';
+          });
+        });
+      });
+
+      function tabNote() {
+        document.getElementById('tab-note').innerHTML = `<div class="card"><h1>Company-wide notification</h1><p style="color:var(--gray)">All clients see this in their portal under Company updates.</p>
+          <div id="nok" class="ok" style="display:none"></div>
+          <form id="nf">
+            <label>Title</label>
+            <input name="title" required />
+            <label>Message</label>
+            <textarea name="body" required></textarea>
+            <button class="btn btn-primary" type="submit">Publish</button>
+          </form></div>`;
+        document.getElementById('nf').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          await TLL.api('/api/admin/notifications', {
+            method: 'POST',
+            body: { title: fd.get('title'), body: fd.get('body') },
+          });
+          const ok = document.getElementById('nok');
+          ok.textContent = 'Published.';
+          ok.style.display = 'block';
+          e.target.reset();
+        });
+      }
+
+      async function tabUsers() {
+        const { users } = await TLL.api('/api/admin/users');
+        const managers = users.filter((u) => u.role === 'manager');
+        const rows = users
+          .map((u) => {
+            if (u.role === 'superadmin') return `<tr><td>${u.name}</td><td>${u.email}</td><td>superadmin</td><td>—</td></tr>`;
+            if (u.role === 'manager') return `<tr><td>${u.name}</td><td>${u.email}</td><td>manager</td><td>—</td></tr>`;
+            const opts =
+              '<option value="">—</option>' +
+              managers.map((m) => `<option value="${m.id}" ${m.id === u.managerId ? 'selected' : ''}>${m.name}</option>`).join('');
+            return `<tr data-user="${u.id}"><td>${u.name}</td><td>${u.email}</td><td>client</td><td><select class="mgr-sel">${opts}</select></td></tr>`;
+          })
+          .join('');
+        document.getElementById('tab-users').innerHTML = `<div class="card"><h1>Users</h1>
+          <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Account manager</th></tr></thead><tbody>${rows}</tbody></table>
+          <hr style="border:none;border-top:1px solid var(--border);margin:24px 0" />
+          <h2>Create user</h2>
+          <form id="uf" class="card" style="box-shadow:none;padding:0;border:none">
+            <div class="row">
+              <div><label>Name</label><input name="name" required /></div>
+              <div><label>Email</label><input name="email" type="email" required /></div>
+            </div>
+            <div class="row">
+              <div><label>Password</label><input name="password" type="text" required /></div>
+              <div><label>Role</label><select name="role" id="newrole"><option value="client">client</option><option value="manager">manager</option></select></div>
+            </div>
+            <div id="mgrwrap"><label>Assign manager (clients)</label><select name="managerId" id="newmgr"><option value="">—</option>${managers
+              .map((m) => `<option value="${m.id}">${m.name}</option>`)
+              .join('')}</select></div>
+            <button class="btn btn-primary" type="submit">Create</button>
+          </form>
+          <div id="uok" class="ok" style="display:none;margin-top:12px"></div>
+          </div>`;
+        document.querySelectorAll('.mgr-sel').forEach((sel) => {
+          sel.addEventListener('change', async () => {
+            const tr = sel.closest('tr');
+            const id = tr.getAttribute('data-user');
+            await TLL.api('/api/admin/users/' + id, { method: 'PATCH', body: { managerId: sel.value || null } });
+          });
+        });
+        document.getElementById('newrole').addEventListener('change', () => {
+          const cl = document.getElementById('newrole').value === 'client';
+          document.getElementById('mgrwrap').style.display = cl ? 'block' : 'none';
+        });
+        document.getElementById('newrole').dispatchEvent(new Event('change'));
+        document.getElementById('uf').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          const body = {
+            name: fd.get('name'),
+            email: fd.get('email'),
+            password: fd.get('password'),
+            role: fd.get('role'),
+          };
+          if (body.role === 'client' && fd.get('managerId')) body.managerId = fd.get('managerId');
+          await TLL.api('/api/admin/users', { method: 'POST', body });
+          await tabUsers();
+          const uok = document.getElementById('uok');
+          if (uok) {
+            uok.textContent = 'User created.';
+            uok.style.display = 'block';
+          }
+        });
+      }
+
+      async function tabShip() {
+        const { users } = await TLL.api('/api/admin/users');
+        const clients = users.filter((u) => u.role === 'client');
+        const managers = users.filter((u) => u.role === 'manager');
+        document.getElementById('tab-ship').innerHTML = `<div class="card"><h1>New shipment</h1>
+          <form id="sf">
+            <label>Client</label><select name="clientId" required><option value="">—</option>${clients
+              .map((c) => `<option value="${c.id}">${c.name}</option>`)
+              .join('')}</select>
+            <label>Manager</label><select name="managerId" required><option value="">—</option>${managers
+              .map((m) => `<option value="${m.id}">${m.name}</option>`)
+              .join('')}</select>
+            <label>Title</label><input name="title" required placeholder="e.g. Air freight — DAC to SIN" />
+            <label>Description</label><textarea name="description"></textarea>
+            <label>Tracking ref (optional)</label><input name="trackingRef" placeholder="Auto if empty" />
+            <button class="btn btn-primary" type="submit">Create</button>
+          </form>
+          <div id="sok" class="ok" style="display:none;margin-top:12px"></div></div>`;
+        document.getElementById('sf').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          const body = {
+            clientId: fd.get('clientId'),
+            managerId: fd.get('managerId'),
+            title: fd.get('title'),
+            description: fd.get('description'),
+            trackingRef: fd.get('trackingRef'),
+          };
+          const r = await TLL.api('/api/admin/shipments', { method: 'POST', body });
+          document.getElementById('sok').textContent = 'Created. Ref: ' + r.shipment.trackingRef;
+          document.getElementById('sok').style.display = 'block';
+          e.target.reset();
+        });
+      }
+
+      async function tabCv() {
+        const { applications } = await TLL.api('/api/admin/applications');
+        const rows = applications.length
+          ? applications
+              .map(
+                (a) =>
+                  `<tr><td>${new Date(a.createdAt).toLocaleString()}</td><td>${a.name}</td><td>${a.email}</td><td>${a.position}</td><td><a href="/${a.cvPath}" target="_blank" rel="noopener">CV</a></td></tr>`
+              )
+              .join('')
+          : '<tr><td colspan="5">No applications yet.</td></tr>';
+        document.getElementById('tab-cv').innerHTML = `<div class="card"><h1>Career CV submissions</h1>
+          <table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Role</th><th>File</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      }
+
+      tabNote();
+      await tabUsers();
+      await tabShip();
+      await tabCv();
+    })();
+  </script>
+</body>
+</html>
