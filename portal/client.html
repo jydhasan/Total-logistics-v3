@@ -20,8 +20,8 @@
     <div id="gate" class="err" style="display:none"></div>
     <div class="tabs">
       <button type="button" class="active" data-tab="ship">Shipment progress</button>
-      <button type="button" data-tab="msg">Messages</button>
-      <button type="button" data-tab="news">Company updates</button>
+      <button type="button" data-tab="msg">Messages<span class="tab-badge" id="badge-msg" hidden>0</span></button>
+      <button type="button" data-tab="news">Company updates<span class="tab-badge" id="badge-news" hidden>0</span></button>
     </div>
     <section id="tab-ship"></section>
     <section id="tab-msg" style="display:none"></section>
@@ -55,16 +55,49 @@
         window.location.href = '/portal/login.html';
       });
 
+      function setBadge(id, n) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const c = Math.max(0, Math.floor(Number(n) || 0));
+        if (c > 0) {
+          el.textContent = c > 99 ? '99+' : String(c);
+          el.removeAttribute('hidden');
+        } else {
+          el.textContent = '0';
+          el.setAttribute('hidden', '');
+        }
+      }
+
+      async function refreshBadges() {
+        try {
+          const u = await TLL.api('/api/client/unread');
+          setBadge('badge-msg', u.messages);
+          setBadge('badge-news', u.notifications);
+        } catch (_) {}
+      }
+
       document.querySelectorAll('.tabs button').forEach((btn) => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
           document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           const t = btn.getAttribute('data-tab');
           document.getElementById('tab-ship').style.display = t === 'ship' ? 'block' : 'none';
           document.getElementById('tab-msg').style.display = t === 'msg' ? 'block' : 'none';
           document.getElementById('tab-news').style.display = t === 'news' ? 'block' : 'none';
+          if (t === 'msg') {
+            await loadMessages();
+            await TLL.api('/api/client/messages/read', { method: 'POST', body: {} });
+            await refreshBadges();
+          }
+          if (t === 'news') {
+            await loadNews();
+            await TLL.api('/api/client/notifications/read', { method: 'POST', body: {} });
+            await refreshBadges();
+          }
         });
       });
+
+      setInterval(refreshBadges, 22000);
 
       async function loadShipments() {
         const { shipments } = await TLL.api('/api/client/shipments');
@@ -100,7 +133,7 @@
           .join('');
         el.innerHTML = `<div class="card"><h2>Your account manager</h2><div class="msg-list">${bubbles || '<p style="color:var(--gray)">No messages yet.</p>'}</div>
           <form id="send" class="row" style="margin-top:12px;flex-direction:column;align-items:stretch">
-            <textarea id="mbody" placeholder="Write a message…"></textarea>
+            <textarea id="mbody" placeholder="Write a message… Max file size: 15MB"></textarea>
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
               <input type="file" id="mfile" />
               <button class="btn btn-primary" type="submit">Send</button>
@@ -115,7 +148,8 @@
           await TLL.api('/api/client/messages', { method: 'POST', body: fd });
           document.getElementById('mbody').value = '';
           document.getElementById('mfile').value = '';
-          loadMessages();
+          await loadMessages();
+          await refreshBadges();
         });
       }
 
@@ -133,8 +167,7 @@
       }
 
       await loadShipments();
-      await loadMessages();
-      await loadNews();
+      await refreshBadges();
     })();
   </script>
 </body>

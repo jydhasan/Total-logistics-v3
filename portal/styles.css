@@ -168,6 +168,7 @@ textarea {
 }
 
 .tabs button {
+  position: relative;
   padding: 8px 14px;
   border: 1px solid var(--border);
   background: var(--white);
@@ -176,6 +177,27 @@ textarea {
   font-family: inherit;
   font-weight: 600;
   color: var(--gray);
+}
+
+.tab-badge {
+  display: inline-flex;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 6px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: #dc2626;
+  border-radius: 999px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.tab-badge[hidden] {
+  display: none !important;
 }
 
 .tabs button.active {

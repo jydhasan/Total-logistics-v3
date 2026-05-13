@@ -26,6 +26,7 @@ function emptyDb() {
     messages: [],
     notifications: [],
     applications: [],
+    cursors: { messages: {}, notifications: {} },
   };
 }
 
@@ -38,7 +39,13 @@ function load() {
   }
   const raw = fs.readFileSync(DB_FILE, 'utf8');
   try {
-    return JSON.parse(raw);
+    const db = JSON.parse(raw);
+    if (!db.cursors) db.cursors = { messages: {}, notifications: {} };
+    else {
+      if (!db.cursors.messages) db.cursors.messages = {};
+      if (!db.cursors.notifications) db.cursors.notifications = {};
+    }
+    return db;
   } catch {
     return emptyDb();
   }

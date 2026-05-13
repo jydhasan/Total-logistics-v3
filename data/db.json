@@ -1,0 +1,154 @@
+{
+  "users": [
+    {
+      "id": "5a9d762b-780c-4602-a84e-e4c9bf51619e",
+      "email": "superadmin@tll.com.bd",
+      "passwordHash": "$2a$10$qyDsE.mAgb9Sgcnrt0.xpe4Sv8F0KRfO5haebKeWdjulh7yErz6VO",
+      "name": "Super Admin",
+      "role": "superadmin",
+      "managerId": null
+    },
+    {
+      "id": "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f",
+      "email": "manager@tll.com.bd",
+      "passwordHash": "$2a$10$wlHhIWW5iLq2kjxaqh0RzOyTC0YdB2Y8Gg0E3SfuGFPv8DSiwnkVO",
+      "name": "Operations Manager",
+      "role": "manager",
+      "managerId": null
+    },
+    {
+      "id": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "email": "client@tll.com.bd",
+      "passwordHash": "$2a$10$GCkc16awdn3BT/9h3EdMGOs5Q/qmnQrE8GMziX6vWJlpA0q3I6ViS",
+      "name": "Demo Client Ltd",
+      "role": "client",
+      "managerId": "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f"
+    }
+  ],
+  "shipments": [
+    {
+      "id": "f2f87f27-cea7-4324-85ff-e6b8d5f4c876",
+      "trackingRef": "TLL-DEMO-001",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "title": "Dhaka to Chittagong FCL",
+      "description": "40ft container — industrial machinery",
+      "stages": [
+        {
+          "key": "booked",
+          "label": "Booking confirmed",
+          "completed": true
+        },
+        {
+          "key": "pickup",
+          "label": "Pickup / Origin handling",
+          "completed": false
+        },
+        {
+          "key": "transit",
+          "label": "In transit",
+          "completed": false
+        },
+        {
+          "key": "customs",
+          "label": "Customs / clearance",
+          "completed": false
+        },
+        {
+          "key": "delivery",
+          "label": "Out for delivery",
+          "completed": false
+        },
+        {
+          "key": "delivered",
+          "label": "Delivered",
+          "completed": false
+        }
+      ],
+      "managerId": "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f",
+      "createdAt": "2026-05-12T16:36:55.650Z",
+      "updatedAt": "2026-05-13T00:36:27.498Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "2ed824d9-a2fc-48eb-b6fe-7bdc9bd62ae1",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "senderId": "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f",
+      "body": "Welcome to Total Logistics. Your shipment is booked and we will confirm pickup shortly.",
+      "fileName": null,
+      "filePath": null,
+      "createdAt": "2026-05-12T16:36:55.651Z"
+    },
+    {
+      "id": "9c56b5c5-d478-48d7-8a5e-b780885b74c9",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "senderId": "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f",
+      "body": "Hello",
+      "fileName": null,
+      "filePath": null,
+      "createdAt": "2026-05-12T16:47:29.487Z"
+    },
+    {
+      "id": "580df91b-3e5f-45c4-a539-3ae27c8808ff",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "senderId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "body": "Message logos are available as icons, vectors, and stock images for free or royalty-free download, suitable for apps, websites, and design projects.",
+      "fileName": null,
+      "filePath": null,
+      "createdAt": "2026-05-13T00:45:05.567Z"
+    },
+    {
+      "id": "1927fc63-23f5-4942-ac44-d9ce3346f929",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "senderId": "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f",
+      "body": "Welcome to Google Messages",
+      "fileName": null,
+      "filePath": null,
+      "createdAt": "2026-05-13T00:47:01.141Z"
+    },
+    {
+      "id": "3fd179be-4390-48b8-901c-246967937baa",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "senderId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "body": "commonly used in graphic design, web development, and publishing to simulate the appearance of content in a layout. Its main purpose is to allow designers and developers to focus on visual elements such as fonts, spacing, and page structure without the distraction of meaningful text. It is often used in templates, mockups, and prototypes to demonstrate how a finished product will look once real content is added",
+      "fileName": null,
+      "filePath": null,
+      "createdAt": "2026-05-13T00:47:56.620Z"
+    },
+    {
+      "id": "60d91b64-4bb2-47e1-9a39-979e1dcb4ea6",
+      "clientId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "senderId": "1a271f50-9e6f-44de-ae88-05839c3af5f5",
+      "body": "Shared file: favicon.ico",
+      "fileName": "favicon.ico",
+      "filePath": "uploads/messages/1778633712962-favicon.ico",
+      "createdAt": "2026-05-13T00:55:12.969Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "35f039a5-54b4-40a6-abc2-f560d91860e3",
+      "title": "Holiday schedule",
+      "body": "Our offices will operate with reduced hours during national holidays. Tracking remains 24/7.",
+      "createdBy": "5a9d762b-780c-4602-a84e-e4c9bf51619e",
+      "createdAt": "2026-05-12T16:36:55.651Z"
+    },
+    {
+      "id": "7d389a41-670d-467b-afde-791c6f470084",
+      "title": "Zahid Hasan",
+      "body": "Hello , This is test message",
+      "createdBy": "5a9d762b-780c-4602-a84e-e4c9bf51619e",
+      "createdAt": "2026-05-12T16:57:11.548Z"
+    }
+  ],
+  "applications": [],
+  "cursors": {
+    "messages": {
+      "1a271f50-9e6f-44de-ae88-05839c3af5f5::1a271f50-9e6f-44de-ae88-05839c3af5f5": "2026-05-13T00:59:36.251Z",
+      "d26262e5-4ee5-40c4-92cd-a3ec4b119d5f::1a271f50-9e6f-44de-ae88-05839c3af5f5": "2026-05-13T01:15:00.062Z"
+    },
+    "notifications": {
+      "1a271f50-9e6f-44de-ae88-05839c3af5f5": "2026-05-13T00:59:37.097Z"
+    }
+  }
+}

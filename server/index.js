@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 
 const store = require('./store');
 const { authMiddleware, requireRoles, login } = require('./auth');
+const unread = require('./unread');
 
 const ROOT = path.join(__dirname, '..');
 const UPLOADS = path.join(ROOT, 'uploads');
@@ -151,6 +152,29 @@ app.get('/api/client/notifications', authMiddleware, requireRoles('client'), (re
   res.json({ notifications: sorted });
 });
 
+app.get('/api/client/unread', authMiddleware, requireRoles('client'), (req, res) => {
+  const d = db();
+  const uid = req.user.id;
+  res.json({
+    messages: unread.countUnreadMessages(d, uid, uid),
+    notifications: unread.countUnreadNotifications(d, uid),
+  });
+});
+
+app.post('/api/client/messages/read', authMiddleware, requireRoles('client'), (req, res) => {
+  const d = db();
+  unread.markMessagesRead(d, req.user.id, req.user.id);
+  persist(d);
+  res.json({ ok: true });
+});
+
+app.post('/api/client/notifications/read', authMiddleware, requireRoles('client'), (req, res) => {
+  const d = db();
+  unread.markNotificationsRead(d, req.user.id);
+  persist(d);
+  res.json({ ok: true });
+});
+
 // ——— manager ———
 app.get('/api/manager/clients', authMiddleware, requireRoles('manager'), (req, res) => {
   const d = db();
@@ -161,6 +185,7 @@ app.get('/api/manager/clients', authMiddleware, requireRoles('manager'), (req, r
       name: c.name,
       email: c.email,
       shipmentCount: d.shipments.filter((s) => s.clientId === c.id).length,
+      unreadMessages: unread.countUnreadMessages(d, c.id, req.user.id),
     })),
   });
 });
@@ -231,17 +256,70 @@ app.post('/api/manager/messages', authMiddleware, requireRoles('manager'), uploa
   res.json({ message: msg });
 });
 
+app.get('/api/manager/unread', authMiddleware, requireRoles('manager'), (req, res) => {
+  const d = db();
+  res.json({ messages: unread.managerTotalUnreadMessages(d, req.user.id) });
+});
+
+app.post('/api/manager/messages/read', authMiddleware, requireRoles('manager'), (req, res) => {
+  const d = db();
+  const { clientId } = req.body || {};
+  if (!clientId) return res.status(400).json({ error: 'clientId required' });
+  const client = d.users.find((u) => u.id === clientId && u.role === 'client');
+  if (!client || client.managerId !== req.user.id) {
+    return res.status(403).json({ error: 'Not your client' });
+  }
+  unread.markMessagesRead(d, req.user.id, clientId);
+  persist(d);
+  res.json({ ok: true });
+});
+
 // ——— super admin ———
 app.get('/api/admin/users', authMiddleware, requireRoles('superadmin'), (req, res) => {
   const d = db();
+  const userDto = (u) => ({
+    id: u.id,
+    email: u.email,
+    name: u.name,
+    role: u.role,
+    managerId: u.managerId,
+  });
+
+  if (req.query.picker === '1') {
+    const sorted = d.users.slice().sort((a, b) => {
+      const ae = (a.email || '').toLowerCase();
+      const be = (b.email || '').toLowerCase();
+      if (ae !== be) return ae.localeCompare(be);
+      return (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' });
+    });
+    return res.json({ users: sorted.map(userDto) });
+  }
+
+  const limit = 50;
+  const sorted = d.users.slice().sort((a, b) => {
+    const ae = (a.email || '').toLowerCase();
+    const be = (b.email || '').toLowerCase();
+    if (ae !== be) return ae.localeCompare(be);
+    return (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' });
+  });
+  const total = sorted.length;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  let page = Math.max(1, parseInt(String(req.query.page || '1'), 10) || 1);
+  page = Math.min(page, totalPages);
+  const start = (page - 1) * limit;
+  const slice = sorted.slice(start, start + limit);
+  const managers = d.users
+    .filter((u) => u.role === 'manager')
+    .map(userDto)
+    .sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }));
+
   res.json({
-    users: d.users.map((u) => ({
-      id: u.id,
-      email: u.email,
-      name: u.name,
-      role: u.role,
-      managerId: u.managerId,
-    })),
+    users: slice.map(userDto),
+    total,
+    page,
+    limit,
+    totalPages,
+    managers,
   });
 });
 
@@ -289,6 +367,20 @@ app.patch('/api/admin/users/:id', authMiddleware, requireRoles('superadmin'), (r
     }
   }
   if (name) user.name = String(name).trim();
+  persist(d);
+  res.json({ ok: true });
+});
+
+app.patch('/api/admin/users/:id/password', authMiddleware, requireRoles('superadmin'), (req, res) => {
+  const d = db();
+  const user = d.users.find((u) => u.id === req.params.id);
+  if (!user) return res.status(404).json({ error: 'Not found' });
+  const { password } = req.body || {};
+  const pw = password != null ? String(password) : '';
+  if (pw.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+  }
+  user.passwordHash = bcrypt.hashSync(pw, 10);
   persist(d);
   res.json({ ok: true });
 });

@@ -20,7 +20,7 @@
     <div id="gate" class="err" style="display:none"></div>
     <div class="tabs">
       <button type="button" class="active" data-tab="ship">Shipments &amp; progress</button>
-      <button type="button" data-tab="msg">Client messages</button>
+      <button type="button" data-tab="msg">Client messages<span class="tab-badge" id="badge-msg" hidden>0</span></button>
     </div>
     <section id="tab-ship"></section>
     <section id="tab-msg" style="display:none"></section>
@@ -53,14 +53,56 @@
       });
 
       document.querySelectorAll('.tabs button').forEach((btn) => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
           document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           const t = btn.getAttribute('data-tab');
           document.getElementById('tab-ship').style.display = t === 'ship' ? 'block' : 'none';
           document.getElementById('tab-msg').style.display = t === 'msg' ? 'block' : 'none';
+          if (t === 'msg') {
+            await refreshBadges();
+            const sel = document.getElementById('clientSel');
+            if (sel) await refreshClientSelect(sel);
+          }
         });
       });
+
+      async function refreshBadges() {
+        try {
+          const u = await TLL.api('/api/manager/unread');
+          const el = document.getElementById('badge-msg');
+          if (!el) return;
+          const c = Math.max(0, Number(u.messages) || 0);
+          if (c > 0) {
+            el.textContent = c > 99 ? '99+' : String(c);
+            el.removeAttribute('hidden');
+          } else {
+            el.textContent = '0';
+            el.setAttribute('hidden', '');
+          }
+        } catch (_) {}
+      }
+
+      async function refreshClientSelect(sel) {
+        if (!sel) return;
+        const cur = sel.value;
+        const { clients } = await TLL.api('/api/manager/clients');
+        sel.innerHTML =
+          '<option value="">Select client…</option>' +
+          clients
+            .map((c) => {
+              const u = c.unreadMessages > 0 ? ` · ${c.unreadMessages} new` : '';
+              return `<option value="${c.id}">${c.name}${u} (${c.email})</option>`;
+            })
+            .join('');
+        if (cur && [...sel.options].some((o) => o.value === cur)) sel.value = cur;
+      }
+
+      setInterval(async () => {
+        await refreshBadges();
+        const sel = document.getElementById('clientSel');
+        if (sel) await refreshClientSelect(sel);
+      }, 22000);
 
       async function loadShipments() {
         const { shipments } = await TLL.api('/api/manager/shipments');
@@ -120,8 +162,8 @@
       async function loadMsgPanel() {
         const el = document.getElementById('tab-msg');
         el.innerHTML = `<div class="card"><label for="clientSel">Client</label><select id="clientSel"></select><div id="thread" style="margin-top:16px"></div></div>`;
-        await loadClients();
         const sel = document.getElementById('clientSel');
+        await refreshClientSelect(sel);
         sel.addEventListener('change', async () => {
           const cid = sel.value;
           const thread = document.getElementById('thread');
@@ -141,12 +183,15 @@
             .join('');
           thread.innerHTML = `<h2>Thread — ${client.name}</h2><div class="msg-list">${bubbles || '<p style="color:var(--gray)">No messages.</p>'}</div>
             <form id="msend" style="margin-top:12px">
-              <textarea id="mbody" placeholder="Reply to client…"></textarea>
+              <textarea id="mbody" placeholder="Reply to client… Max file size: 15MB"></textarea>
               <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;align-items:center">
                 <input type="file" id="mfile" />
                 <button class="btn btn-primary" type="submit">Send</button>
               </div>
             </form>`;
+          await TLL.api('/api/manager/messages/read', { method: 'POST', body: { clientId: cid } });
+          await refreshBadges();
+          await refreshClientSelect(sel);
           document.getElementById('msend').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData();
@@ -156,12 +201,14 @@
             if (f) fd.append('file', f);
             await TLL.api('/api/manager/messages', { method: 'POST', body: fd });
             sel.dispatchEvent(new Event('change'));
+            await refreshBadges();
           });
         });
       }
 
       await loadShipments();
       await loadMsgPanel();
+      await refreshBadges();
     })();
   </script>
 </body>

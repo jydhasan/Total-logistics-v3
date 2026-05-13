@@ -49,6 +49,9 @@
         document.getElementById('gate').style.display = 'block';
         return;
       }
+      let adminUsersPage = 1;
+      let userPickerCache = null;
+
       document.getElementById('who').textContent = me.user.name;
       document.getElementById('logout').addEventListener('click', (e) => {
         e.preventDefault();
@@ -91,21 +94,61 @@
         });
       }
 
-      async function tabUsers() {
-        const { users } = await TLL.api('/api/admin/users');
-        const managers = users.filter((u) => u.role === 'manager');
-        const rows = users
-          .map((u) => {
-            if (u.role === 'superadmin') return `<tr><td>${u.name}</td><td>${u.email}</td><td>superadmin</td><td>—</td></tr>`;
-            if (u.role === 'manager') return `<tr><td>${u.name}</td><td>${u.email}</td><td>manager</td><td>—</td></tr>`;
-            const opts =
-              '<option value="">—</option>' +
-              managers.map((m) => `<option value="${m.id}" ${m.id === u.managerId ? 'selected' : ''}>${m.name}</option>`).join('');
-            return `<tr data-user="${u.id}"><td>${u.name}</td><td>${u.email}</td><td>client</td><td><select class="mgr-sel">${opts}</select></td></tr>`;
-          })
+      async function tabUsers(goPage) {
+        if (typeof goPage === 'number' && !Number.isNaN(goPage)) adminUsersPage = goPage;
+        const data = await TLL.api('/api/admin/users?page=' + adminUsersPage + '&limit=50');
+        adminUsersPage = data.page;
+        const users = data.users;
+        const managers = data.managers || [];
+        if (!userPickerCache) {
+          userPickerCache = (await TLL.api('/api/admin/users?picker=1')).users;
+        }
+        const esc = (s) =>
+          String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/"/g, '&quot;');
+        const rows =
+          users.length > 0
+            ? users
+                .map((u) => {
+                  if (u.role === 'superadmin')
+                    return `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>superadmin</td><td>—</td></tr>`;
+                  if (u.role === 'manager')
+                    return `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>manager</td><td>—</td></tr>`;
+                  const opts =
+                    '<option value="">—</option>' +
+                    managers
+                      .map((m) => `<option value="${m.id}" ${m.id === u.managerId ? 'selected' : ''}>${esc(m.name)}</option>`)
+                      .join('');
+                  return `<tr data-user="${u.id}"><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>client</td><td><select class="mgr-sel">${opts}</select></td></tr>`;
+                })
+                .join('')
+            : '<tr><td colspan="4" style="color:var(--gray);padding:12px">No users yet.</td></tr>';
+        const pwdOptions = userPickerCache
+          .map((u) => `<option value="${u.id}">${esc(u.name)} — ${esc(u.email)} (${u.role})</option>`)
           .join('');
+        const pgPrevDis = data.page <= 1 ? ' disabled' : '';
+        const pgNextDis = data.page >= data.totalPages ? ' disabled' : '';
         document.getElementById('tab-users').innerHTML = `<div class="card"><h1>Users</h1>
           <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Account manager</th></tr></thead><tbody>${rows}</tbody></table>
+          <div class="pager" style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
+            <button type="button" class="btn btn-ghost" id="pgPrev"${pgPrevDis}>Previous</button>
+            <span style="font-size:0.88rem;color:var(--gray)">Page <strong>${data.page}</strong> of <strong>${data.totalPages}</strong> · ${data.total} users total (${data.limit} per page)</span>
+            <button type="button" class="btn btn-ghost" id="pgNext"${pgNextDis}>Next</button>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:24px 0" />
+          <h2>Reset user password</h2>
+          <p style="color:var(--gray);font-size:0.9rem;margin:0 0 14px">Set a new password for any account (client, manager, or super admin).</p>
+          <div id="pwmsg" class="err" style="display:none;margin-bottom:12px"></div>
+          <div id="pwok" class="ok" style="display:none;margin-bottom:12px"></div>
+          <form id="pwdForm" style="max-width:480px">
+            <label for="pwdUser">User</label>
+            <select id="pwdUser" name="userId" required>${pwdOptions}</select>
+            <label for="pwdNew">New password (min 6 characters)</label>
+            <input id="pwdNew" name="password" type="password" autocomplete="new-password" minlength="6" required />
+            <button type="submit" class="btn btn-accent" style="margin-top:8px">Update password</button>
+          </form>
           <hr style="border:none;border-top:1px solid var(--border);margin:24px 0" />
           <h2>Create user</h2>
           <form id="uf" class="card" style="box-shadow:none;padding:0;border:none">
@@ -118,12 +161,14 @@
               <div><label>Role</label><select name="role" id="newrole"><option value="client">client</option><option value="manager">manager</option></select></div>
             </div>
             <div id="mgrwrap"><label>Assign manager (clients)</label><select name="managerId" id="newmgr"><option value="">—</option>${managers
-              .map((m) => `<option value="${m.id}">${m.name}</option>`)
+              .map((m) => `<option value="${m.id}">${esc(m.name)}</option>`)
               .join('')}</select></div>
             <button class="btn btn-primary" type="submit">Create</button>
           </form>
           <div id="uok" class="ok" style="display:none;margin-top:12px"></div>
           </div>`;
+        document.getElementById('pgPrev').addEventListener('click', () => tabUsers(data.page - 1));
+        document.getElementById('pgNext').addEventListener('click', () => tabUsers(data.page + 1));
         document.querySelectorAll('.mgr-sel').forEach((sel) => {
           sel.addEventListener('change', async () => {
             const tr = sel.closest('tr');
@@ -147,6 +192,8 @@
           };
           if (body.role === 'client' && fd.get('managerId')) body.managerId = fd.get('managerId');
           await TLL.api('/api/admin/users', { method: 'POST', body });
+          userPickerCache = null;
+          adminUsersPage = 1;
           await tabUsers();
           const uok = document.getElementById('uok');
           if (uok) {
@@ -154,10 +201,31 @@
             uok.style.display = 'block';
           }
         });
+        document.getElementById('pwdForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const pwmsg = document.getElementById('pwmsg');
+          const pwok = document.getElementById('pwok');
+          pwmsg.style.display = 'none';
+          pwok.style.display = 'none';
+          const userId = document.getElementById('pwdUser').value;
+          const password = document.getElementById('pwdNew').value;
+          try {
+            await TLL.api('/api/admin/users/' + encodeURIComponent(userId) + '/password', {
+              method: 'PATCH',
+              body: { password },
+            });
+            document.getElementById('pwdNew').value = '';
+            pwok.textContent = 'Password updated for that user.';
+            pwok.style.display = 'block';
+          } catch (err) {
+            pwmsg.textContent = err.message || 'Failed to update password.';
+            pwmsg.style.display = 'block';
+          }
+        });
       }
 
       async function tabShip() {
-        const { users } = await TLL.api('/api/admin/users');
+        const { users } = await TLL.api('/api/admin/users?picker=1');
         const clients = users.filter((u) => u.role === 'client');
         const managers = users.filter((u) => u.role === 'manager');
         document.getElementById('tab-ship').innerHTML = `<div class="card"><h1>New shipment</h1>
