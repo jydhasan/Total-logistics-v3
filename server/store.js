@@ -27,6 +27,7 @@ function emptyDb() {
     notifications: [],
     applications: [],
     cursors: { messages: {}, notifications: {} },
+    visits: [],
   };
 }
 
@@ -45,6 +46,7 @@ function load() {
       if (!db.cursors.messages) db.cursors.messages = {};
       if (!db.cursors.notifications) db.cursors.notifications = {};
     }
+    if (!Array.isArray(db.visits)) db.visits = [];
     return db;
   } catch {
     return emptyDb();
@@ -63,6 +65,7 @@ function seedIfEmpty(db) {
 
   const hash = (p) => bcrypt.hashSync(p, 10);
   const superadminId = uuid();
+  const webadminId = uuid();
   const managerId = uuid();
   const clientId = uuid();
 
@@ -73,6 +76,14 @@ function seedIfEmpty(db) {
       passwordHash: hash('admin123'),
       name: 'Super Admin',
       role: 'superadmin',
+      managerId: null,
+    },
+    {
+      id: webadminId,
+      email: 'webadmin@tll.com.bd',
+      passwordHash: hash('webadmin123'),
+      name: 'Web Admin',
+      role: 'webadmin',
       managerId: null,
     },
     {

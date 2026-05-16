@@ -6,6 +6,7 @@
   <title>Super Admin — Total Logistics</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="top-strip">
@@ -23,12 +24,15 @@
       <button type="button" data-tab="users">Users &amp; assignments</button>
       <button type="button" data-tab="ship">Create shipment</button>
       <button type="button" data-tab="cv">Career applications</button>
+      <button type="button" data-tab="visitors">Visitor analytics</button>
     </div>
     <section id="tab-note"></section>
     <section id="tab-users" style="display:none"></section>
     <section id="tab-ship" style="display:none"></section>
     <section id="tab-cv" style="display:none"></section>
+    <section id="tab-visitors" style="display:none"></section>
   </div>
+  <script src="/track.js"></script>
   <script src="common.js"></script>
   <script>
     (async function () {
@@ -51,6 +55,7 @@
       }
       let adminUsersPage = 1;
       let userPickerCache = null;
+      let adminVisitsPage = 1;
 
       document.getElementById('who').textContent = me.user.name;
       document.getElementById('logout').addEventListener('click', (e) => {
@@ -64,9 +69,10 @@
           document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           const t = btn.getAttribute('data-tab');
-          ['note', 'users', 'ship', 'cv'].forEach((x) => {
+          ['note', 'users', 'ship', 'cv', 'visitors'].forEach((x) => {
             document.getElementById('tab-' + x).style.display = x === t ? 'block' : 'none';
           });
+          if (t === 'visitors') tabVisits();
         });
       });
 
@@ -114,6 +120,8 @@
                 .map((u) => {
                   if (u.role === 'superadmin')
                     return `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>superadmin</td><td>—</td></tr>`;
+                  if (u.role === 'webadmin')
+                    return `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>webadmin</td><td>—</td></tr>`;
                   if (u.role === 'manager')
                     return `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>manager</td><td>—</td></tr>`;
                   const opts =
@@ -257,6 +265,129 @@
           document.getElementById('sok').style.display = 'block';
           e.target.reset();
         });
+      }
+
+      async function loadVisitChart(period) {
+        const st = await TLL.api('/api/admin/visits/stats?period=' + encodeURIComponent(period));
+        const canvas = document.getElementById('visitChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+        if (window.__tllVisitChart) {
+          window.__tllVisitChart.destroy();
+          window.__tllVisitChart = null;
+        }
+        window.__tllVisitChart = new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: st.labels,
+            datasets: [
+              {
+                label: 'Page views',
+                data: st.pageviews,
+                backgroundColor: 'rgba(37, 99, 235, 0.78)',
+                borderRadius: 4,
+              },
+              {
+                label: 'Clicks (batched)',
+                data: st.clicks,
+                backgroundColor: 'rgba(245, 158, 11, 0.92)',
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { position: 'top' },
+              title: {
+                display: true,
+                text: 'Page views vs clicks by period',
+                font: { size: 14, weight: '600' },
+              },
+            },
+            scales: {
+              x: { ticks: { maxRotation: 50, minRotation: 0, autoSkip: true, maxTicksLimit: 18 } },
+              y: { beginAtZero: true, ticks: { precision: 0 } },
+            },
+          },
+        });
+      }
+
+      async function tabVisits(goPage) {
+        if (window.__tllVisitChart) {
+          window.__tllVisitChart.destroy();
+          window.__tllVisitChart = null;
+        }
+        if (typeof goPage === 'number' && !Number.isNaN(goPage)) adminVisitsPage = goPage;
+        const data = await TLL.api('/api/admin/visits?page=' + adminVisitsPage + '&limit=50');
+        adminVisitsPage = data.page;
+        const esc = (s) =>
+          String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/"/g, '&quot;');
+        const rows =
+          data.visits && data.visits.length
+            ? data.visits
+                .map((v) => {
+                  const pathDisplay =
+                    v.kind === 'click'
+                      ? `${esc(v.path)} <span style="color:#b45309;font-size:0.78rem">(${Number(v.clickCount) || 1} clicks)</span>`
+                      : esc(v.path);
+                  const kindLabel = v.kind === 'click' ? 'clicks' : 'view';
+                  return `<tr><td style="white-space:nowrap;font-size:0.82rem">${esc(
+                    new Date(v.createdAt).toLocaleString()
+                  )}</td><td><code style="font-size:0.78rem">${esc(v.visitorId)}</code></td><td>${pathDisplay}</td><td style="font-size:0.72rem;color:var(--gray)">${kindLabel}</td><td style="font-size:0.78rem;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${esc(
+                    v.ip || ''
+                  )}">${esc(v.ip || '—')}</td><td style="font-size:0.75rem;max-width:200px" title="${esc(
+                    v.userAgent || ''
+                  )}">${esc((v.userAgent || '').slice(0, 72))}${(v.userAgent || '').length > 72 ? '…' : ''}</td><td style="font-size:0.75rem;max-width:140px;overflow:hidden;text-overflow:ellipsis" title="${esc(
+                    v.referrer || ''
+                  )}">${esc((v.referrer || '').slice(0, 40))}${(v.referrer || '').length > 40 ? '…' : ''}</td></tr>`;
+                })
+                .join('')
+            : '<tr><td colspan="7" style="color:var(--gray);padding:12px">No visits logged yet. Browse the site with the server running; tracking uses the <code>tll_vid</code> cookie.</td></tr>';
+        const pgPrevDis = data.page <= 1 ? ' disabled' : '';
+        const pgNextDis = data.page >= data.totalPages ? ' disabled' : '';
+        document.getElementById('tab-visitors').innerHTML = `<div class="card"><h1>Visitor analytics</h1>
+          <p style="color:var(--gray);font-size:0.9rem;line-height:1.55;margin:0 0 16px">
+            Each browser receives an HttpOnly cookie <strong>tll_vid</strong>. <strong>Page views</strong> run once per load from <code>track.js</code>; <strong>clicks</strong> are batched (~2.5s) per page. Up to <strong>10,000</strong> recent events kept.
+          </p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px">
+            <div class="card" style="padding:14px;margin:0;box-shadow:none;border:1px solid var(--border)"><div style="font-size:1.5rem;font-weight:700;color:var(--navy)">${data.total}</div><div style="font-size:0.82rem;color:var(--gray)">Logged events</div></div>
+            <div class="card" style="padding:14px;margin:0;box-shadow:none;border:1px solid var(--border)"><div style="font-size:1.5rem;font-weight:700;color:var(--navy)">${data.uniqueVisitors}</div><div style="font-size:0.82rem;color:var(--gray)">Unique visitor IDs</div></div>
+          </div>
+          <h2 style="font-size:1rem;margin:8px 0 8px">Traffic chart</h2>
+          <p style="color:var(--gray);font-size:0.82rem;margin:0 0 12px;line-height:1.45">
+            <strong>Day</strong> = last 30 days · <strong>Week</strong> = 12 weeks (Mon–Sun) · <strong>Month</strong> = 12 calendar months. Bars show page views (blue) and batched clicks (amber).</p>
+          <div class="tabs" style="margin-bottom:12px">
+            <button type="button" class="btn btn-ghost visit-chart-tab active" data-period="day">Day</button>
+            <button type="button" class="btn btn-ghost visit-chart-tab" data-period="week">Week</button>
+            <button type="button" class="btn btn-ghost visit-chart-tab" data-period="month">Month</button>
+          </div>
+          <div style="height:300px;position:relative;margin-bottom:20px">
+            <canvas id="visitChart"></canvas>
+          </div>
+          <h2 style="font-size:1rem;margin-bottom:10px">Recent events</h2>
+          <table><thead><tr><th>Time</th><th>Visitor ID</th><th>Path</th><th>Type</th><th>IP</th><th>User agent</th><th>Referrer</th></tr></thead><tbody>${rows}</tbody></table>
+          <div class="pager" style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
+            <button type="button" class="btn btn-ghost" id="vgPrev"${pgPrevDis}>Previous</button>
+            <span style="font-size:0.88rem;color:var(--gray)">Page <strong>${data.page}</strong> of <strong>${data.totalPages}</strong> · ${data.total} events (${data.limit} per page)</span>
+            <button type="button" class="btn btn-ghost" id="vgNext"${pgNextDis}>Next</button>
+          </div></div>`;
+        const vprev = document.getElementById('vgPrev');
+        const vnext = document.getElementById('vgNext');
+        if (vprev) vprev.addEventListener('click', () => tabVisits(data.page - 1));
+        if (vnext) vnext.addEventListener('click', () => tabVisits(data.page + 1));
+        document.querySelectorAll('.visit-chart-tab').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            document.querySelectorAll('.visit-chart-tab').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            await loadVisitChart(btn.getAttribute('data-period'));
+          });
+        });
+        await loadVisitChart('day');
       }
 
       async function tabCv() {

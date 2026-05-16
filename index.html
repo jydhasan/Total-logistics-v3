@@ -18,13 +18,15 @@
       box-sizing: border-box;
     }
 
+      .logo img { height: 58px; width: auto; display: block; }
+
     :root {
       --navy: #0a1628;
       --navy2: #0f2044;
       --blue: #1a4fa0;
       --blue2: #2563eb;
-      --accent: #f59e0b;
-      --accent2: #fbbf24;
+      --accent: red;
+      --accent2: red;
       --white: #ffffff;
       --light: #f0f4f8;
       --gray: #64748b;
@@ -335,7 +337,7 @@
       bottom: 0;
       width: 55%;
       max-width: 800px;
-      opacity: 0.07;
+      opacity: 0.7;
       font-size: 18rem;
       color: var(--blue2);
       line-height: 1;
@@ -636,7 +638,8 @@
 
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      /* grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); */
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
 
@@ -703,6 +706,22 @@
       font-size: 0.9rem;
       color: var(--gray);
       line-height: 1.7;
+    }
+
+    .service-card ul {
+      margin: 14px 0 0;
+      padding-left: 1.15rem;
+      font-size: 0.86rem;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    .service-card ul li {
+      margin-bottom: 6px;
+    }
+
+    .service-card ul li:last-child {
+      margin-bottom: 0;
     }
 
     .service-link {
@@ -1193,48 +1212,6 @@
       color: var(--gray);
     }
 
-    /* ============ CLIENTS ============ */
-    .clients {
-      padding: 60px 0;
-      border-top: 1px solid #e2e8f0;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .clients-label {
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--gray);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 30px;
-    }
-
-    .clients-logos {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-
-    .client-logo {
-      padding: 12px 24px;
-      border-radius: 6px;
-      background: var(--light);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--gray);
-      letter-spacing: 1px;
-      opacity: 0.6;
-      transition: all 0.3s;
-    }
-
-    .client-logo:hover {
-      opacity: 1;
-      color: var(--navy);
-      background: #e2e8f0;
-    }
 
     /* ============ BLOG / NEWS ============ */
     .news {
@@ -1629,42 +1606,58 @@
     }
 
     /* ============ MAP ============ */
-    .map-section {
-      height: 350px;
-      background: var(--light);
-      position: relative;
-      overflow: hidden;
-    }
+    /* Map container - parent div */
+.map-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
 
-    .map-section iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      filter: grayscale(0.3);
-    }
+.map-section {
+  flex: 1;
+  min-width: 280px;
+  height: 350px;
+  background: var(--light);
+  position: relative;
+  overflow: hidden;
+}
 
-    .map-overlay {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: var(--white);
-      border-radius: 8px;
-      padding: 16px 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      border-left: 3px solid var(--accent);
-    }
+.map-section iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: grayscale(0.3);
+}
 
-    .map-overlay h4 {
-      font-weight: 700;
-      color: var(--navy);
-      font-size: 0.95rem;
-    }
+.map-overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--accent);
+}
 
-    .map-overlay p {
-      font-size: 0.8rem;
-      color: var(--gray);
-      margin-top: 2px;
-    }
+.map-overlay h4 {
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+
+.map-overlay p {
+  font-size: 0.8rem;
+  color: var(--gray);
+  margin-top: 2px;
+}
+
+/* Mobile: stack */
+@media (max-width: 600px) {
+  .map-container {
+    flex-direction: column;
+  }
+}
 
     /* ============ FOOTER ============ */
     footer {
@@ -2079,10 +2072,16 @@
       .videos-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 600px) {
       .videos-grid {
+        grid-template-columns: 1fr;
+      }
+      .services-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -2127,7 +2126,7 @@
     .partners-track {
       display: flex;
       gap: 30px;
-      animation: partnersScroll 22s linear infinite;
+      animation: partnersScroll 54s linear infinite;
       width: max-content;
     }
 
@@ -2144,12 +2143,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      padding: 18px 32px;
-      background: var(--light);
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      min-width: 180px;
+      /* padding: 28px 40px; */
+      /* background: var(--light); */
+      /* border: 1.5px solid #e2e8f0; */
+      /* border-radius: 10px; */
+      min-width: 300px;
+      min-height: 130px;
       transition: all 0.3s;
       cursor: default;
       flex-shrink: 0;
@@ -2162,31 +2161,21 @@
       transform: translateY(-3px);
     }
 
-    .partner-logo-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      flex-shrink: 0;
+    .partner-logo-img {
+      max-height: 150px;
+      max-width: 280px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      filter: grayscale(12%);
+      opacity: 0.92;
+      transition: filter 0.3s, opacity 0.3s;
     }
 
-    .partner-name {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--navy);
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
-
-    .partner-type {
-      font-size: 0.7rem;
-      color: var(--gray);
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    .partner-card:hover .partner-logo-img {
+      filter: grayscale(0);
+      opacity: 1;
     }
 
     /* ============ TEAM / ABOUT US ============ */
@@ -2525,6 +2514,7 @@
 </head>
 
 <body>
+  <script src="/track.js"></script>
 
   <!-- PRELOADER -->
   <div id="preloader">
@@ -2539,14 +2529,14 @@
     <button class="close-nav" id="closeNav"><i class="fas fa-times"></i></button>
     <a href="#home">Home</a>
     <a href="#services">Services</a>
+    <a href="#about">About Us</a>
     <a href="#tracking">Track Shipment</a>
     <a href="#fleet">Our Fleet</a>
-    <a href="#about">About Us</a>
+    <a href="#news">News</a>
+    <a href="#careers">Careers</a>
     <a href="#videos">Videos</a>
     <a href="#partners">Partners</a>
     <a href="#team">Team</a>
-    <a href="#news">News</a>
-    <a href="#careers">Careers</a>
     <a href="#contact">Contact</a>
   </div>
 
@@ -2554,9 +2544,9 @@
   <div class="topbar">
     <div class="inner">
       <div class="tb-left">
-        <span><i class="fas fa-phone" style="margin-right:6px;color:var(--accent)"></i> +880 1700-000000</span>
+        <span><i class="fas fa-phone" style="margin-right:6px;color:var(--accent)"></i> +880 1959-083615</span>
         &nbsp;&nbsp;|&nbsp;&nbsp;
-        <span><i class="fas fa-envelope" style="margin-right:6px;color:var(--accent)"></i> info@tll.com.bd</span>
+        <span><i class="fas fa-envelope" style="margin-right:6px;color:var(--accent)"></i> CEO@TLL.COM.BD</span>
         &nbsp;&nbsp;|&nbsp;&nbsp;
         <span><i class="fas fa-clock" style="margin-right:6px;color:var(--accent)"></i> Sat–Thu: 8:00 AM – 6:00
           PM</span>
@@ -2576,39 +2566,38 @@
   <!-- NAVBAR -->
   <nav id="navbar">
     <div class="nav-inner">
-      <a href="#home" class="logo">
+      <!-- <a href="#home" class="logo">
         <div class="logo-icon"><i class="fas fa-truck-moving"></i></div>
         <div>
           <div class="logo-text">Total Logistics</div>
           <div class="logo-sub">Limited · Est. 2005</div>
         </div>
+      </a> -->
+      <a class="logo" href="index.html">
+        <img src="tll-logo.png" alt="Total Logistics Limited" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+        <span style="display:none;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;letter-spacing:3px;">TLL</span>
       </a>
       <ul class="nav-links">
         <li><a href="#home" class="active">Home</a></li>
         <li class="has-drop">
           <a href="#services">Services <i class="fas fa-chevron-down" style="font-size:0.65rem"></i></a>
           <div class="dropdown">
-            <a href="#services"><i class="fas fa-boxes" style="margin-right:8px;color:var(--accent)"></i> Freight
-              Transport</a>
-            <a href="#services"><i class="fas fa-warehouse" style="margin-right:8px;color:var(--accent)"></i>
-              Warehousing</a>
-            <a href="#services"><i class="fas fa-ship" style="margin-right:8px;color:var(--accent)"></i> Sea Freight</a>
-            <a href="#services"><i class="fas fa-plane" style="margin-right:8px;color:var(--accent)"></i> Air
-              Freight</a>
-            <a href="#services"><i class="fas fa-box-open" style="margin-right:8px;color:var(--accent)"></i> Last Mile
-              Delivery</a>
-            <a href="#services"><i class="fas fa-file-contract" style="margin-right:8px;color:var(--accent)"></i>
-              Customs Clearance</a>
+            <a href="#services"><i class="fas fa-file-contract" style="margin-right:8px;color:var(--accent)"></i>Customs Clearance</a>
+            <a href="#services"><i class="fas fa-warehouse" style="margin-right:8px;color:var(--accent)"></i>Warehousing Solutions</a>
+            <a href="#services"><i class="fas fa-route" style="margin-right:8px;color:var(--accent)"></i>Transportation Services</a>
+            <a href="#services"><i class="fas fa-ship" style="margin-right:8px;color:var(--accent)"></i>NVOCC Shipping</a>
+            <a href="#services"><i class="fas fa-cubes" style="margin-right:8px;color:var(--accent)"></i>Project Logistics</a>
+            <a href="#services"><i class="fas fa-globe" style="margin-right:8px;color:var(--accent)"></i>Freight Forwarding</a>
           </div>
         </li>
+        <li><a href="#about">About</a></li>
         <li><a href="#tracking">Track Shipment</a></li>
         <li><a href="#fleet">Fleet</a></li>
-        <li><a href="#about">About</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#careers">Careers</a></li>
         <li><a href="#videos">Videos</a></li>
         <li><a href="#partners">Partners</a></li>
         <li><a href="#team">Team</a></li>
-        <li><a href="#news">News</a></li>
-        <li><a href="#careers">Careers</a></li>
         <li><a href="#contact" class="nav-cta">Get Quote</a></li>
       </ul>
       <div class="hamburger" id="hamburger">
@@ -2623,11 +2612,11 @@
     <div class="hero-pattern"></div>
     <div class="hero-accent-line"></div>
     <div class="hero-img-placeholder" style="background:none;">
-      <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1200&auto=format&fit=crop&q=80"
+      <img src="https://cdn.pixabay.com/photo/2016/02/27/13/40/port-1225549_1280.jpg"
         alt="Logistics Truck" style="width:100%;height:100%;object-fit:cover;opacity:0.35;position:absolute;inset:0;" />
-      <div
+      <!-- <div
         style="position:absolute;inset:0;background:linear-gradient(90deg,var(--navy) 0%,rgba(10,22,40,0.3) 100%);z-index:2;">
-      </div>
+      </div> -->
     </div>
     <div class="hero-content">
       <div class="hero-badge">
@@ -2665,27 +2654,19 @@
   <!-- TICKER -->
   <div class="ticker">
     <div class="ticker-inner">
-      <span class="ticker-item"><i class="fas fa-truck"></i> Road Freight <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-ship"></i> Sea Freight <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-plane"></i> Air Freight <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-warehouse"></i> Warehousing <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-box"></i> Last Mile <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-file-alt"></i> Customs Clearance <span
-          class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-recycle"></i> Reverse Logistics <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-thermometer-half"></i> Cold Chain <span
-          class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-file-contract"></i> Customs Clearance <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-warehouse"></i> Warehousing Solutions <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-route"></i> Transportation Services <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-ship"></i> NVOCC Shipping <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-cubes"></i> Project Logistics <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-globe"></i> Freight Forwarding <span class="ticker-dot"></span></span>
       <!-- duplicate for seamless loop -->
-      <span class="ticker-item"><i class="fas fa-truck"></i> Road Freight <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-ship"></i> Sea Freight <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-plane"></i> Air Freight <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-warehouse"></i> Warehousing <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-box"></i> Last Mile <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-file-alt"></i> Customs Clearance <span
-          class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-recycle"></i> Reverse Logistics <span class="ticker-dot"></span></span>
-      <span class="ticker-item"><i class="fas fa-thermometer-half"></i> Cold Chain <span
-          class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-file-contract"></i> Customs Clearance <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-warehouse"></i> Warehousing Solutions <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-route"></i> Transportation Services <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-ship"></i> NVOCC Shipping <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-cubes"></i> Project Logistics <span class="ticker-dot"></span></span>
+      <span class="ticker-item"><i class="fas fa-globe"></i> Freight Forwarding <span class="ticker-dot"></span></span>
     </div>
   </div>
 
@@ -2696,53 +2677,73 @@
         <div>
           <span class="section-tag">Our Services</span>
           <h2 class="section-title">Complete Logistics<br>Solutions</h2>
-          <p class="section-sub">From pickup to delivery — we manage every link in your supply chain with precision and
-            care.</p>
+          <p class="section-sub">To fulfill your needs, we represent a broad range of integrated services, which includes:</p>
         </div>
         <a href="#contact" class="btn-primary" style="flex-shrink:0"><i class="fas fa-arrow-right"></i> All Services</a>
       </div>
       <div class="services-grid reveal">
         <div class="service-card">
-          <div class="service-icon"><i class="fas fa-truck-moving"></i></div>
-          <h3>Road Freight Transport</h3>
-          <p>Full-load and part-load trucking across all 64 districts of Bangladesh with GPS-tracked vehicles and
-            trained drivers.</p>
-          <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+          <div class="service-icon"><i class="fas fa-file-contract"></i></div>
+          <h3>Customs Clearance</h3>
+          <p>Navigating customs regulations can be complex. Our Customs Clearance service keeps you compliant with local
+            and international rules—reducing delays and helping you avoid penalties.</p>
+          <ul>
+            <li>Expert knowledge of customs regulations</li>
+            <li>Documentation preparation and submission</li>
+            <li>Tariff classification assistance</li>
+            <li>Duty and tax management</li>
+          </ul>
+          <a href="#contact" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="service-card">
           <div class="service-icon"><i class="fas fa-warehouse"></i></div>
-          <h3>Warehousing & Storage</h3>
-          <p>Modern, secure warehouses with inventory management systems, 24/7 CCTV, and flexible short- and long-term
-            storage.</p>
-          <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+          <h3>Warehousing Solutions</h3>
+          <p>Secure, strategically located warehousing for a wide range of storage and fulfillment needs.</p>
+          <ul>
+            <li><strong>General storage</strong> — for diverse goods and mixed requirements</li>
+            <li><strong>Temperature-controlled</strong> — ideal for perishables and sensitive cargo</li>
+            <li><strong>Fulfillment centers</strong> — streamlined picking, packing, and distribution</li>
+            <li>Inventory systems, real-time tracking, and flexible space options</li>
+          </ul>
+          <a href="#contact" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-route"></i></div>
+          <h3>Transportation Services</h3>
+          <p>Multimodal transport tailored to your timelines, lane, and budget.</p>
+          <ul>
+            <li><strong>Road transport</strong> — reliable local and regional deliveries</li>
+            <li><strong>Air freight</strong> — fast international movement for time-sensitive goods</li>
+            <li><strong>Ocean freight</strong> — cost-effective options for bulk and FCL/LCL</li>
+            <li>Dedicated fleet coordination, GPS visibility, and routing optimized for efficiency</li>
+          </ul>
+          <a href="#contact" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="service-card">
           <div class="service-icon"><i class="fas fa-ship"></i></div>
-          <h3>Sea Freight (Import/Export)</h3>
-          <p>FCL and LCL sea freight services via Chittagong Port, with end-to-end documentation and customs support.
-          </p>
-          <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+          <h3>NVOCC Shipping</h3>
+          <p>As an NVOCC, we arrange ocean capacity without owning vessels—offering flexible, cost-effective shipping
+            aligned to your volumes and schedules.</p>
+          <ul>
+            <li>Access to global shipping routes and carrier networks</li>
+            <li>Competitive pricing through consolidated purchasing power</li>
+            <li>Simplified booking, documentation, and coordination</li>
+          </ul>
+          <a href="#contact" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="service-card">
-          <div class="service-icon"><i class="fas fa-plane-departure"></i></div>
-          <h3>Air Freight</h3>
-          <p>Time-critical cargo shipped globally via Dhaka, Chittagong & Sylhet airports. Express and standard options
-            available.</p>
-          <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+          <div class="service-icon"><i class="fas fa-cubes"></i></div>
+          <h3>Project Logistics</h3>
+          <p>For oversized, heavy lift, and complex cargo, we plan and execute specialized moves so your project stays on
+            schedule and site-ready—from route planning and permits to supervised loading and delivery.</p>
+          <a href="#contact" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="service-card">
-          <div class="service-icon"><i class="fas fa-box-open"></i></div>
-          <h3>Last Mile Delivery</h3>
-          <p>Fast, reliable last-mile delivery solutions for e-commerce and retail businesses across urban and rural
-            Bangladesh.</p>
-          <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-file-contract"></i></div>
-          <h3>Customs Clearance</h3>
-          <p>Expert customs brokerage for smooth import/export clearance at all major ports and land ports in
-            Bangladesh.</p>
-          <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+          <div class="service-icon"><i class="fas fa-globe"></i></div>
+          <h3>Freight Forwarding</h3>
+          <p>We act as your intermediary for international transport—coordinating carriers, documentation, and compliance
+            so goods move across borders predictably and under control.</p>
+          <a href="#contact" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
@@ -2832,10 +2833,10 @@
             <label>Shipment Type</label>
             <select id="trackType">
               <option value="">Select type</option>
-              <option>Road Freight</option>
-              <option>Sea Freight</option>
-              <option>Air Freight</option>
-              <option>Last Mile Delivery</option>
+              <option>Road transport</option>
+              <option>Air freight</option>
+              <option>Ocean freight</option>
+              <option>Multimodal / project</option>
             </select>
           </div>
           <button class="btn-primary" style="width:100%;justify-content:center" onclick="trackShipment()">
@@ -3032,22 +3033,6 @@
     </div>
   </section>
 
-  <!-- CLIENTS -->
-  <section class="clients">
-    <div class="section-inner">
-      <p class="clients-label">Trusted by leading companies in Bangladesh</p>
-      <div class="clients-logos">
-        <div class="client-logo">PRAN Group</div>
-        <div class="client-logo">Square Pharma</div>
-        <div class="client-logo">BRAC</div>
-        <div class="client-logo">Walton</div>
-        <div class="client-logo">ACI Limited</div>
-        <div class="client-logo">DBL Group</div>
-        <div class="client-logo">Meghna Group</div>
-      </div>
-    </div>
-  </section>
-
   <!-- NEWS -->
   <section class="news" id="news">
     <div class="section-inner">
@@ -3189,24 +3174,31 @@
             <div class="contact-item">
               <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
               <div>
-                <h4>Head Office</h4>
-                <p>House #XX, Road #XX, Motijheel C/A<br>Dhaka – 1000, Bangladesh</p>
+                <h4>DAC OFFICE</h4>
+                <p>HOUSE 24/E, ROAD 13-C (2ND FLOOR)<br>BANANI, DHAKA -1213</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <h4>CGP OFFICE</h4>
+                <p>HOUSE 1331/B, SHAHJADI CHAMBER (7TH FLOOR)<br>SHEIKH MUJIB ROAD, AGRABAD, CHITTAGONG -4100.</p>
               </div>
             </div>
             <div class="contact-item">
               <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
               <div>
                 <h4>Phone</h4>
-                <a href="tel:+8801700000000">+880 1700-000000</a><br>
-                <a href="tel:+88029990000">+880-2-9990000</a>
+                <a href="tel:+8801700000000">TEL : +8802-48814743</a><br>
+                <a href="tel:+88029990000">CELL : +880 1959-083615</a>
               </div>
             </div>
             <div class="contact-item">
               <div class="contact-icon"><i class="fas fa-envelope"></i></div>
               <div>
                 <h4>Email</h4>
-                <a href="mailto:info@tll.com.bd">info@tll.com.bd</a><br>
-                <a href="mailto:sales@tll.com.bd">sales@tll.com.bd</a>
+                <a href="mailto:info@tll.com.bd">CEO@TLL.COM.BD</a><br>
+                <!-- <a href="mailto:sales@tll.com.bd">sales@tll.com.bd</a> -->
               </div>
             </div>
             <div class="contact-item">
@@ -3246,13 +3238,12 @@
               <label>Service Required *</label>
               <select>
                 <option value="">Select a service</option>
-                <option>Road Freight Transport</option>
-                <option>Warehousing & Storage</option>
-                <option>Sea Freight (Import/Export)</option>
-                <option>Air Freight</option>
-                <option>Last Mile Delivery</option>
                 <option>Customs Clearance</option>
-                <option>Cold Chain Logistics</option>
+                <option>Warehousing Solutions</option>
+                <option>Transportation Services</option>
+                <option>NVOCC Shipping</option>
+                <option>Project Logistics</option>
+                <option>Freight Forwarding</option>
                 <option>Other</option>
               </select>
             </div>
@@ -3450,92 +3441,26 @@
       </div>
       <div class="partners-marquee-wrap">
         <div class="partners-track">
-          <!-- Set 1 -->
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#fff3e0;"><i class="fas fa-ship" style="color:#e65100;"></i></div>
-            <div>
-              <div class="partner-name">Maersk Line</div>
-              <div class="partner-type">Shipping</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#e3f2fd;"><i class="fas fa-plane" style="color:#0d47a1;"></i></div>
-            <div>
-              <div class="partner-name">DHL Express</div>
-              <div class="partner-type">Air Freight</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#fce4ec;"><i class="fas fa-truck" style="color:#b71c1c;"></i></div>
-            <div>
-              <div class="partner-name">DB Schenker</div>
-              <div class="partner-type">Logistics</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#e8f5e9;"><i class="fas fa-warehouse" style="color:#1b5e20;"></i></div>
-            <div>
-              <div class="partner-name">Kuehne+Nagel</div>
-              <div class="partner-type">Freight</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#f3e5f5;"><i class="fas fa-box" style="color:#4a148c;"></i></div>
-            <div>
-              <div class="partner-name">Panalpina</div>
-              <div class="partner-type">Supply Chain</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#fffde7;"><i class="fas fa-anchor" style="color:#f57f17;"></i></div>
-            <div>
-              <div class="partner-name">MSC Shipping</div>
-              <div class="partner-type">Ocean Freight</div>
-            </div>
-          </div>
-          <!-- Set 2 (duplicate for seamless loop) -->
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#fff3e0;"><i class="fas fa-ship" style="color:#e65100;"></i></div>
-            <div>
-              <div class="partner-name">Maersk Line</div>
-              <div class="partner-type">Shipping</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#e3f2fd;"><i class="fas fa-plane" style="color:#0d47a1;"></i></div>
-            <div>
-              <div class="partner-name">DHL Express</div>
-              <div class="partner-type">Air Freight</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#fce4ec;"><i class="fas fa-truck" style="color:#b71c1c;"></i></div>
-            <div>
-              <div class="partner-name">DB Schenker</div>
-              <div class="partner-type">Logistics</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#e8f5e9;"><i class="fas fa-warehouse" style="color:#1b5e20;"></i></div>
-            <div>
-              <div class="partner-name">Kuehne+Nagel</div>
-              <div class="partner-type">Freight</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#f3e5f5;"><i class="fas fa-box" style="color:#4a148c;"></i></div>
-            <div>
-              <div class="partner-name">Panalpina</div>
-              <div class="partner-type">Supply Chain</div>
-            </div>
-          </div>
-          <div class="partner-card">
-            <div class="partner-logo-icon" style="background:#fffde7;"><i class="fas fa-anchor" style="color:#f57f17;"></i></div>
-            <div>
-              <div class="partner-name">MSC Shipping</div>
-              <div class="partner-type">Ocean Freight</div>
-            </div>
-          </div>
+          <!-- Set 1 — logos in trusted-partners/ -->
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/alz.webp" alt="ALZ" loading="lazy" width="280" height="96" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/Cross-world.webp" alt="Cross World" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/grand-park.webp" alt="Grand Park" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/linkin.webp" alt="Linkin" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/micromax.webp" alt="Micromax" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/north-star.webp" alt="North Star" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/regent.webp" alt="Regent" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/sanargaon.webp" alt="Sanargaon" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/vip-trading.webp" alt="VIP Trading" loading="lazy" width="280" height="150" /></div>
+          <!-- Set 2 — duplicate for seamless marquee loop -->
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/alz.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/Cross-world.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/grand-park.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/linkin.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/micromax.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/north-star.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/regent.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/sanargaon.webp" alt="" loading="lazy" width="280" height="150" /></div>
+          <div class="partner-card"><img class="partner-logo-img" src="trusted-partners/vip-trading.webp" alt="" loading="lazy" width="280" height="150" /></div>
         </div>
       </div>
     </div>
@@ -3698,6 +3623,17 @@
   </section>
 
   <!-- MAP -->
+<div class="map-container">
+    <div class="map-section">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.2631099478097!2d90.40673661498194!3d23.726592984591!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b0b0b0b0b0%3A0x0!2sDhaka%2C+Bangladesh!5e0!3m2!1sen!2sbd!4v1699000000000!5m2!1sen!2sbd"
+      allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+    <div class="map-overlay">
+      <h4><i class="fas fa-building" style="color:var(--blue2);margin-right:6px"></i> Total Logistics Ltd</h4>
+      <p>BANANI, DHAKA -1213</p>
+    </div>
+  </div>
   <div class="map-section">
     <iframe
       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.2631099478097!2d90.40673661498194!3d23.726592984591!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b0b0b0b0b0%3A0x0!2sDhaka%2C+Bangladesh!5e0!3m2!1sen!2sbd!4v1699000000000!5m2!1sen!2sbd"
@@ -3705,22 +3641,29 @@
     </iframe>
     <div class="map-overlay">
       <h4><i class="fas fa-building" style="color:var(--blue2);margin-right:6px"></i> Total Logistics Ltd</h4>
-      <p>Motijheel C/A, Dhaka – 1000</p>
+      <p>AGRABAD, CHITTAGONG -4100</p>
     </div>
   </div>
+</div>
+
+
 
   <!-- FOOTER -->
   <footer>
     <div class="footer-main">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="#home" class="logo" style="display:inline-flex;margin-bottom:4px">
+          <!-- <a href="#home" class="logo" style="display:inline-flex;margin-bottom:4px">
             <div class="logo-icon" style="background:var(--accent)"><i class="fas fa-truck-moving"
                 style="color:var(--navy)"></i></div>
             <div style="margin-left:10px">
               <div class="logo-text">Total Logistics</div>
               <div class="logo-sub">Limited</div>
             </div>
+          </a> -->
+          <a class="logo" href="index.html">
+            <img src="tll-logo.png" alt="Total Logistics Limited" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <span style="display:none;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;letter-spacing:3px;">TLL</span>
           </a>
           <p>Bangladesh's trusted end-to-end logistics partner since 2005. Moving cargo, building trust, delivering
             excellence.</p>
@@ -3734,14 +3677,12 @@
         <div class="footer-col">
           <h4>Services</h4>
           <ul>
-            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Road Freight</a></li>
-            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Warehousing</a></li>
-            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Sea Freight</a></li>
-            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Air Freight</a></li>
-            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Last Mile Delivery</a>
-            </li>
-            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Customs Clearance</a>
-            </li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Customs Clearance</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Warehousing Solutions</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Transportation Services</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> NVOCC Shipping</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Project Logistics</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem"></i> Freight Forwarding</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -3793,7 +3734,7 @@
   </button>
 
   <!-- WhatsApp Float -->
-  <a href="https://wa.me/8801700000000" target="_blank" class="wa-float" title="Chat on WhatsApp">
+  <a href="https://wa.me/8801703500404" target="_blank" class="wa-float" title="Chat on WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>
 

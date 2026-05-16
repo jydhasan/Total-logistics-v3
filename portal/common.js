@@ -15,6 +15,7 @@
     if (role === 'client') window.location.href = '/portal/client.html';
     else if (role === 'manager') window.location.href = '/portal/manager.html';
     else if (role === 'superadmin') window.location.href = '/portal/super-admin.html';
+    else if (role === 'webadmin') window.location.href = '/portal/web-admin.html';
     else window.location.href = '/portal/login.html';
   }
 

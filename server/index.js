@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const multer = require('multer');
 const { v4: uuid } = require('uuid');
@@ -9,6 +10,7 @@ const bcrypt = require('bcryptjs');
 const store = require('./store');
 const { authMiddleware, requireRoles, login } = require('./auth');
 const unread = require('./unread');
+const { aggregateVisits } = require('./visitStats');
 
 const ROOT = path.join(__dirname, '..');
 const UPLOADS = path.join(ROOT, 'uploads');
@@ -23,6 +25,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json({ limit: '2mb' }));
 
 const cvStorage = multer.diskStorage({
@@ -101,6 +104,87 @@ app.post('/api/careers/apply', (req, res, next) => {
   d.applications.push(row);
   persist(d);
   res.json({ ok: true, id: row.id });
+});
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+app.post('/api/track/visit', (req, res) => {
+  const d = db();
+  if (!Array.isArray(d.visits)) d.visits = [];
+
+  let visitorId = req.cookies && req.cookies.tll_vid;
+  if (!visitorId || !UUID_RE.test(String(visitorId))) {
+    visitorId = uuid();
+  }
+
+  const rawPath = (req.body && req.body.path) != null ? String(req.body.path) : req.originalUrl || '/';
+  const safePath = rawPath.slice(0, 512);
+  const fwd = req.headers['x-forwarded-for'];
+  const ip = (typeof fwd === 'string' ? fwd.split(',')[0] : req.socket.remoteAddress || '').trim().slice(0, 64);
+
+  const row = {
+    id: uuid(),
+    visitorId,
+    path: safePath || '/',
+    kind: 'pageview',
+    referrer: String(req.get('Referer') || '').slice(0, 800),
+    userAgent: String(req.get('User-Agent') || '').slice(0, 500),
+    ip,
+    createdAt: new Date().toISOString(),
+  };
+  d.visits.push(row);
+  if (d.visits.length > 10000) {
+    d.visits = d.visits.slice(-10000);
+  }
+  persist(d);
+
+  res.cookie('tll_vid', visitorId, {
+    maxAge: 365 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+  });
+  res.json({ ok: true });
+});
+
+app.post('/api/track/click', (req, res) => {
+  const d = db();
+  if (!Array.isArray(d.visits)) d.visits = [];
+
+  let visitorId = req.cookies && req.cookies.tll_vid;
+  if (!visitorId || !UUID_RE.test(String(visitorId))) {
+    visitorId = uuid();
+  }
+
+  const rawPath = (req.body && req.body.path) != null ? String(req.body.path) : '/';
+  const safePath = rawPath.slice(0, 512);
+  const count = Math.min(200, Math.max(1, parseInt(String((req.body && req.body.count) || '1'), 10) || 1));
+  const fwd = req.headers['x-forwarded-for'];
+  const ip = (typeof fwd === 'string' ? fwd.split(',')[0] : req.socket.remoteAddress || '').trim().slice(0, 64);
+
+  d.visits.push({
+    id: uuid(),
+    visitorId,
+    path: safePath || '/',
+    kind: 'click',
+    clickCount: count,
+    referrer: '',
+    userAgent: String(req.get('User-Agent') || '').slice(0, 500),
+    ip,
+    createdAt: new Date().toISOString(),
+  });
+  if (d.visits.length > 10000) {
+    d.visits = d.visits.slice(-10000);
+  }
+  persist(d);
+
+  res.cookie('tll_vid', visitorId, {
+    maxAge: 365 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+  });
+  res.json({ ok: true });
 });
 
 app.use('/uploads', express.static(UPLOADS));
@@ -385,7 +469,7 @@ app.patch('/api/admin/users/:id/password', authMiddleware, requireRoles('superad
   res.json({ ok: true });
 });
 
-app.post('/api/admin/notifications', authMiddleware, requireRoles('superadmin'), (req, res) => {
+app.post('/api/admin/notifications', authMiddleware, requireRoles('superadmin', 'webadmin'), (req, res) => {
   const d = db();
   const { title, body } = req.body || {};
   if (!title || !body) return res.status(400).json({ error: 'title and body required' });
@@ -401,10 +485,41 @@ app.post('/api/admin/notifications', authMiddleware, requireRoles('superadmin'),
   res.json({ notification: n });
 });
 
-app.get('/api/admin/applications', authMiddleware, requireRoles('superadmin'), (req, res) => {
+app.get('/api/admin/applications', authMiddleware, requireRoles('superadmin', 'webadmin'), (req, res) => {
   const d = db();
   const sorted = [...d.applications].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   res.json({ applications: sorted });
+});
+
+app.get('/api/admin/visits/stats', authMiddleware, requireRoles('superadmin', 'webadmin'), (req, res) => {
+  const d = db();
+  const visits = Array.isArray(d.visits) ? d.visits : [];
+  const period = String(req.query.period || 'day').toLowerCase();
+  if (!['day', 'week', 'month'].includes(period)) {
+    return res.status(400).json({ error: 'period must be day, week, or month' });
+  }
+  res.json(aggregateVisits(visits, period));
+});
+
+app.get('/api/admin/visits', authMiddleware, requireRoles('superadmin', 'webadmin'), (req, res) => {
+  const d = db();
+  const visits = Array.isArray(d.visits) ? d.visits : [];
+  const limit = 50;
+  const total = visits.length;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const page = Math.min(totalPages, Math.max(1, parseInt(String(req.query.page || '1'), 10) || 1));
+  const sorted = visits.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const start = (page - 1) * limit;
+  const slice = sorted.slice(start, start + limit);
+  const uniqueVisitors = new Set(visits.map((v) => v.visitorId)).size;
+  res.json({
+    visits: slice,
+    total,
+    page,
+    limit,
+    totalPages,
+    uniqueVisitors,
+  });
 });
 
 app.post('/api/admin/shipments', authMiddleware, requireRoles('superadmin'), (req, res) => {
