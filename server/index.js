@@ -17,6 +17,19 @@ const UPLOADS = path.join(ROOT, 'uploads');
 const CV_DIR = path.join(UPLOADS, 'cvs');
 const MSG_DIR = path.join(UPLOADS, 'messages');
 
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const DB_FILE = path.join(DATA_DIR, 'db.json');
+
+// 📖 Read DB
+function readDB() {
+    return JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
+}
+
+// ✍️ Write DB
+function writeDB(data) {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+}
+
 [UPLOADS, CV_DIR, MSG_DIR].forEach((d) => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
@@ -561,6 +574,47 @@ app.post('/api/admin/shipments', authMiddleware, requireRoles('superadmin'), (re
   persist(d);
   res.json({ shipment: ship });
 });
+
+// Tracking shipment by trackingRef (public)
+app.post("/api/shipment", (req, res) => {
+    const { tracking_number, description } = req.body;
+
+    const db = readDB();
+
+    const newShipment = {
+        id: Date.now(),
+        tracking_number,
+        description,
+        created_at: new Date().toISOString()
+    };
+
+    db.shipments.push(newShipment);
+    writeDB(db);
+
+    res.json({
+        message: "Saved",
+        data: newShipment
+    });
+});
+
+app.get("/api/shipment/:tracking", (req, res) => {
+    const db = readDB();
+
+    const data = db.shipments
+        .filter(s => s.tracking_number === req.params.tracking)
+        .sort((a, b) => b.id - a.id);
+
+    if (data.length === 0) {
+        return res.status(404).json({ message: "Not found" });
+    }
+
+    res.json({
+        tracking_number: data[0].tracking_number,
+        description: data[0].description
+    });
+});
+
+// Tracking all shipments (public) end
 
 app.use(express.static(ROOT));
 
