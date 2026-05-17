@@ -2396,6 +2396,28 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
       "ip": "::1",
       "createdAt": "2026-05-17T14:36:01.029Z"
+    },
+    {
+      "id": "09cf6272-865d-4d3b-a339-ccab9b00d022",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T14:37:11.924Z"
+    },
+    {
+      "id": "5f49a0d0-34e3-4c95-9eef-f3945537c3d7",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T14:37:24.865Z"
     }
   ]
 }
