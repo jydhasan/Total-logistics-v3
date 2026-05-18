@@ -575,78 +575,50 @@ app.post('/api/admin/shipments', authMiddleware, requireRoles('superadmin'), (re
   res.json({ shipment: ship });
 });
 
-// Tracking shipment by trackingRef (public)
+// ——— Shipment tracking (public) ———
 app.post("/api/shipment", (req, res) => {
     const { tracking_number, description } = req.body;
-
     const db = readDB();
-
     const newShipment = {
         id: Date.now(),
         tracking_number,
         description,
         created_at: new Date().toISOString()
     };
-
     db.shipments.push(newShipment);
     writeDB(db);
-
-    res.json({
-        message: "Saved",
-        data: newShipment
-    });
+    res.json({ message: "Saved", data: newShipment });
 });
 
 app.get("/api/shipment/:tracking", (req, res) => {
     const db = readDB();
-
     const data = db.shipments
         .filter(s => s.tracking_number === req.params.tracking)
         .sort((a, b) => b.id - a.id);
-
     if (data.length === 0) {
         return res.status(404).json({ message: "Not found" });
     }
-
     res.json({
         tracking_number: data[0].tracking_number,
         description: data[0].description
     });
 });
 
-// Tracking all shipments (public) end
-
-
-// ====================== CONTACT FORM API ======================
-
-// POST /api/contact/quote
+// ——— Contact / Quote (public submit, protected read) ———
 app.post('/api/contact/quote', async (req, res) => {
     try {
-        const {
-            name,
-            company,
-            phone,
-            email,
-            service,
-            origin,
-            destination,
-            message
-        } = req.body;
-
-        // Basic Validation
+        const { name, company, phone, email, service, origin, destination, message } = req.body;
         if (!name || !phone || !email || !service) {
             return res.status(400).json({
                 success: false,
                 message: "Name, Phone, Email and Service are required!"
             });
         }
-
         const db = readDB();
-
         const newQuote = {
             id: uuid(),
             timestamp: new Date().toISOString(),
-            status: "new", // new, contacted, closed
+            status: "new",
             name: name.trim(),
             company: company?.trim() || null,
             phone: phone.trim(),
@@ -657,49 +629,33 @@ app.post('/api/contact/quote', async (req, res) => {
             message: message?.trim() || null,
             ip: req.ip || req.connection.remoteAddress
         };
-
-        // Save to database
         if (!db.quotes) db.quotes = [];
-        db.quotes.unshift(newQuote); // newest first
-
+        db.quotes.unshift(newQuote);
         writeDB(db);
-
-        // Optional: Save as separate JSON file (good for backup)
         const quoteFile = path.join(MSG_DIR, `quote_${newQuote.id}.json`);
         fs.writeFileSync(quoteFile, JSON.stringify(newQuote, null, 2));
-
         console.log(`✅ New Quote Request from: ${name} (${email})`);
-
         res.status(200).json({
             success: true,
             message: "Thank you! Your request has been submitted successfully."
         });
-
     } catch (error) {
         console.error("Quote submission error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error. Please try again later."
-        });
+        res.status(500).json({ success: false, message: "Server error. Please try again later." });
     }
 });
 
-// show quotes (for testing, not protected)
-// GET All Quotes - Admin দেখার জন্য
-app.get('/api/quotes', (req, res) => {
+// GET All Quotes — protected: webadmin or superadmin only
+app.get('/api/quotes', authMiddleware, requireRoles('superadmin', 'webadmin'), (req, res) => {
     try {
         const db = readDB();
         const quotes = db.quotes || [];
-        
-        // নতুন থেকে পুরানো সাজানো
         quotes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        
         res.json(quotes);
     } catch (error) {
         res.status(500).json({ error: "Server error" });
     }
 });
-// quote API end
 
 app.use(express.static(ROOT));
 

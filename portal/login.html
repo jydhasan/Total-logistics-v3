@@ -6,57 +6,100 @@
   <title>Portal Login — Total Logistics</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    #checking{position:fixed;inset:0;background:#f0f2f5;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;font-size:1rem;color:#555}
+    #checking .sp{width:34px;height:34px;border:4px solid #ddd;border-top-color:#2563eb;border-radius:50%;animation:sp .7s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    #login-box{display:none}
+  </style>
 </head>
 <body>
   <script src="/track.js"></script>
-  <div class="top-strip">
-    <strong>TOTAL LOGISTICS</strong>
-    <div>
-      <a href="/">← Visitor site</a>
+
+  <!-- Shown while checking existing session -->
+  <div id="checking"><div class="sp"></div><span>Checking session…</span></div>
+
+  <!-- Hidden until session check done -->
+  <div id="login-box">
+    <div class="top-strip">
+      <strong>TOTAL LOGISTICS</strong>
+      <div>
+        <a href="/">← Visitor site</a>
+      </div>
+    </div>
+    <div class="shell" style="max-width:440px">
+      <div class="card" style="margin-top:32px">
+        <h1>Portal login</h1>
+        <p style="color:var(--gray);margin:0 0 20px;font-size:0.95rem">Client, manager, web admin, or super admin access.</p>
+        <div id="err" class="err" style="display:none"></div>
+        <div id="info" style="display:none;background:#e8f4fd;color:#1a6fa8;padding:10px 14px;border-radius:8px;font-size:0.9rem;margin-bottom:14px"></div>
+        <form id="f">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="username" required />
+          <label for="pw">Password</label>
+          <input id="pw" type="password" autocomplete="current-password" required />
+          <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:4px">Sign in</button>
+        </form>
+      </div>
     </div>
   </div>
-  <div class="shell" style="max-width:440px">
-    <div class="card" style="margin-top:32px">
-      <h1>Portal login</h1>
-      <p style="color:var(--gray);margin:0 0 20px;font-size:0.95rem">Client, manager, web admin, or super admin access.</p>
-      <div id="err" class="err" style="display:none"></div>
-      <form id="f">
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="username" required />
-        <label for="pw">Password</label>
-        <input id="pw" type="password" autocomplete="current-password" required />
-        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:4px">Sign in</button>
-      </form>
-      <p style="font-size:0.82rem;color:var(--gray);margin-top:18px;line-height:1.5">
-        Demo accounts (after <code style="background:var(--light);padding:2px 6px;border-radius:4px">npm start</code>):<br />
-        client@tll.com.bd / client123<br />
-        manager@tll.com.bd / manager123<br />
-        webadmin@tll.com.bd / webadmin123<br />
-        superadmin@tll.com.bd / admin123
-      </p>
-    </div>
-  </div>
+
   <script src="common.js"></script>
   <script>
-    document.getElementById('f').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const err = document.getElementById('err');
-      err.style.display = 'none';
-      try {
-        const data = await TLL.api('/api/auth/login', {
-          method: 'POST',
-          body: {
-            email: document.getElementById('email').value,
-            password: document.getElementById('pw').value,
-          },
-        });
-        TLL.setToken(data.token);
-        TLL.redirectForRole(data.user.role);
-      } catch (ex) {
-        err.textContent = ex.message || 'Login failed';
-        err.style.display = 'block';
+    (async function () {
+      // ── Check for existing valid session ────────────────────────
+      // If user already has a valid token, send them straight to dashboard.
+      const token = TLL.getToken();
+      if (token) {
+        try {
+          const me = await TLL.api('/api/me');
+          // Token still valid — redirect to their dashboard
+          TLL.redirectForRole(me.user.role);
+          return; // stop here, redirect is happening
+        } catch (e) {
+          // Token expired or invalid — clear it and show login form
+          TLL.setToken(null);
+        }
       }
-    });
+
+      // No valid session — show login form
+      document.getElementById('checking').style.display = 'none';
+      document.getElementById('login-box').style.display = 'block';
+
+      // Show error message if redirected here with ?err=forbidden
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('err') === 'forbidden') {
+        const info = document.getElementById('info');
+        info.textContent = 'আপনার এই পেজে access নেই। অনুগ্রহ করে সঠিক account দিয়ে login করুন।';
+        info.style.display = 'block';
+      }
+
+      // ── Login form submit ────────────────────────────────────────
+      document.getElementById('f').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const err = document.getElementById('err');
+        err.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'Signing in…';
+        try {
+          const data = await TLL.api('/api/auth/login', {
+            method: 'POST',
+            body: {
+              email: document.getElementById('email').value,
+              password: document.getElementById('pw').value,
+            },
+          });
+          TLL.setToken(data.token);
+          TLL.redirectForRole(data.user.role);
+        } catch (ex) {
+          err.textContent = ex.message || 'Login failed';
+          err.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign in';
+        }
+      });
+    })();
   </script>
 </body>
 </html>

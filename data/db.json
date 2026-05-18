@@ -31,6 +31,22 @@
       "name": "Demo Client Ltd",
       "role": "client",
       "managerId": "36d422d0-714e-47af-a988-34efd3930c09"
+    },
+    {
+      "id": "c031178d-c06d-42db-a170-bc69f2cf5e74",
+      "email": "jydhasan@gmail.com",
+      "passwordHash": "$2a$10$ouOyfNXYLuLCfc4Zuxjtpe9Z7ojFvyo6.L/EBGvYkd6UX.NnciRU.",
+      "name": "Zahid",
+      "role": "manager",
+      "managerId": null
+    },
+    {
+      "id": "1bc4f310-e244-4319-b0a3-3f6790476ab2",
+      "email": "mehedy@gmail.com",
+      "passwordHash": "$2a$10$2g4T7bHb6lhMs5vJsS8qieyJ7GdkxbcS70juO1RlSAZ013HdJ1Mfe",
+      "name": "Mehedy",
+      "role": "client",
+      "managerId": "c031178d-c06d-42db-a170-bc69f2cf5e74"
     }
   ],
   "shipments": [
@@ -141,6 +157,48 @@
       "tracking_number": "43",
       "description": "Wlcome To this Book",
       "created_at": "2026-05-17T15:47:03.137Z"
+    },
+    {
+      "id": "7d77634a-2b7e-4272-a736-f1e06b137837",
+      "trackingRef": "TLL-MPAHSOZM",
+      "clientId": "1bc4f310-e244-4319-b0a3-3f6790476ab2",
+      "title": "New ShipMent",
+      "description": "Hello",
+      "stages": [
+        {
+          "key": "booked",
+          "label": "Booking confirmed",
+          "completed": true
+        },
+        {
+          "key": "pickup",
+          "label": "Pickup / Origin handling",
+          "completed": false
+        },
+        {
+          "key": "transit",
+          "label": "In transit",
+          "completed": false
+        },
+        {
+          "key": "customs",
+          "label": "Customs / clearance",
+          "completed": false
+        },
+        {
+          "key": "delivery",
+          "label": "Out for delivery",
+          "completed": false
+        },
+        {
+          "key": "delivered",
+          "label": "Delivered",
+          "completed": false
+        }
+      ],
+      "managerId": "c031178d-c06d-42db-a170-bc69f2cf5e74",
+      "createdAt": "2026-05-18T00:55:22.498Z",
+      "updatedAt": "2026-05-18T00:55:22.498Z"
     }
   ],
   "messages": [
@@ -176,7 +234,8 @@
   "cursors": {
     "messages": {
       "36d422d0-714e-47af-a988-34efd3930c09::4cd7db4b-3195-48f3-a348-d54bbe7cc966": "2026-05-17T14:42:07.728Z",
-      "4cd7db4b-3195-48f3-a348-d54bbe7cc966::4cd7db4b-3195-48f3-a348-d54bbe7cc966": "2026-05-17T05:42:00.581Z"
+      "4cd7db4b-3195-48f3-a348-d54bbe7cc966::4cd7db4b-3195-48f3-a348-d54bbe7cc966": "2026-05-17T05:42:00.581Z",
+      "c031178d-c06d-42db-a170-bc69f2cf5e74::1bc4f310-e244-4319-b0a3-3f6790476ab2": "2026-05-18T00:53:33.487Z"
     },
     "notifications": {
       "4cd7db4b-3195-48f3-a348-d54bbe7cc966": "2026-05-17T05:46:31.995Z"
@@ -3345,9 +3404,987 @@
       "userAgent": "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Mobile Safari/537.36",
       "ip": "::ffff:127.0.0.1",
       "createdAt": "2026-05-17T15:48:11.717Z"
+    },
+    {
+      "id": "ff755e44-ed22-443d-a889-2f5af1e7750e",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:36:45.810Z"
+    },
+    {
+      "id": "64d5435d-c7c3-4856-8b5c-f10585fdf023",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:40:00.034Z"
+    },
+    {
+      "id": "08cfe3dd-9df7-4e0d-aa41-387e44caa2ae",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/index.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:40:02.958Z"
+    },
+    {
+      "id": "130d6c09-ddbf-479c-99b0-bcebf4f8892a",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 3,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:40:23.804Z"
+    },
+    {
+      "id": "41510e02-c65a-46ad-85ea-fe3c701c2202",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:40:39.024Z"
+    },
+    {
+      "id": "f8854b25-c2e3-4fc3-9821-d767dcd6bd6c",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:41:07.337Z"
+    },
+    {
+      "id": "52d0a5e3-ba9d-488e-a766-ca81fe3044e1",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:42:29.420Z"
+    },
+    {
+      "id": "72f6f10f-210d-4895-8a46-ca1d1b43ae57",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:43:46.234Z"
+    },
+    {
+      "id": "1209ddfc-c6a6-451d-afad-66a1591cbd35",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:44:03.560Z"
+    },
+    {
+      "id": "799f65ee-ebbd-4e24-b141-0cc7e144d95e",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/index.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-17T16:44:10.244Z"
+    },
+    {
+      "id": "8212a768-46ac-4962-b23b-d7168527e3cc",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:35:58.285Z"
+    },
+    {
+      "id": "ca0445ec-6711-4b09-8b4f-e48776c4c076",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:47:04.952Z"
+    },
+    {
+      "id": "f364b0eb-ecfb-4d69-bd6e-3dea19919d16",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:47:14.063Z"
+    },
+    {
+      "id": "e456be05-b2ac-45be-8548-0c14d8b9ba27",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/manager.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/manager.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:47:25.512Z"
+    },
+    {
+      "id": "099e4c84-3ef7-467e-b563-4479d05cde51",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:47:25.582Z"
+    },
+    {
+      "id": "611fc56f-4470-4b71-a7ad-670ab6148127",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:47:52.537Z"
+    },
+    {
+      "id": "b031f45d-cb14-45cc-8f70-c79284bf8909",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:48:14.383Z"
+    },
+    {
+      "id": "2866defe-f3b4-4f27-ba14-5ee093f650d5",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:48:18.738Z"
+    },
+    {
+      "id": "9b11e393-1044-4e56-80e1-5d07c43c8c34",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:48:24.262Z"
+    },
+    {
+      "id": "5d24ea68-08ba-4569-b2b9-9a90a9ddb312",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:48:27.283Z"
+    },
+    {
+      "id": "2e2accfb-3450-416e-b302-1a95998887d3",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 3,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:48:33.693Z"
+    },
+    {
+      "id": "4664ef84-cdf2-4644-9ede-064b91774288",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:48:40.578Z"
+    },
+    {
+      "id": "ba1da29b-9ad3-40c2-9840-1a370664848e",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/super-admin.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:49:18.001Z"
+    },
+    {
+      "id": "e91d86b2-b434-4e6c-8387-164722e53c03",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html?err=forbidden",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html?err=forbidden",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:49:18.096Z"
+    },
+    {
+      "id": "1a05ab8c-4814-4c99-ac4e-fb1559b4dd53",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/super-admin.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:49:33.147Z"
+    },
+    {
+      "id": "e53be032-947e-43b6-871a-c8f69ae60b26",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:49:38.025Z"
+    },
+    {
+      "id": "7c183216-9843-4949-bcf1-2d791ab7c649",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:49:46.246Z"
+    },
+    {
+      "id": "1e21b71a-917c-44c7-9ff6-31d082e4afb5",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:49:54.831Z"
+    },
+    {
+      "id": "7689ef20-287a-42ce-b35c-dff0c912e4eb",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:03.227Z"
+    },
+    {
+      "id": "817302a4-4925-40a2-a14c-8a84f18bb0f3",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:09.878Z"
+    },
+    {
+      "id": "6b908d9d-eb07-4afe-9ce8-70436d47b738",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:18.287Z"
+    },
+    {
+      "id": "efce0d1b-878d-4d06-8f93-f48e87992015",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:25.317Z"
+    },
+    {
+      "id": "d054af49-be83-4b8e-999f-7189450a558c",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:30.522Z"
+    },
+    {
+      "id": "0a43ce74-ec05-4752-aa87-a3cbb4c538a5",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:36.270Z"
+    },
+    {
+      "id": "780b3ac1-be56-481e-9907-5063ad9e4d9b",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/manager.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:47.177Z"
+    },
+    {
+      "id": "67975ce7-222e-49cd-bb66-4b3dba563717",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "click",
+      "clickCount": 4,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:50:59.384Z"
+    },
+    {
+      "id": "6e66da13-6b30-4b3c-ab7f-003a91968646",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:51:03.050Z"
+    },
+    {
+      "id": "9a3fec80-583f-4f97-ab98-3d70f97afe32",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:16.680Z"
+    },
+    {
+      "id": "1d58fdf6-3440-45a9-9012-7f77b30a688b",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:21.662Z"
+    },
+    {
+      "id": "f732241e-8851-4b6b-90f2-5faaa08dcef8",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:31.819Z"
+    },
+    {
+      "id": "baf91eff-41ce-4046-ab71-d7b86a6bf1b8",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/super-admin.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:37.575Z"
+    },
+    {
+      "id": "ad0c2c2b-8ee2-4e88-a8bc-88a2573a41d0",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:45.054Z"
+    },
+    {
+      "id": "068675f3-70fb-4433-9cdc-34a2258abbb3",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:50.388Z"
+    },
+    {
+      "id": "8edff966-9050-4e9f-b8ed-a7145eeb94f2",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:51:55.651Z"
+    },
+    {
+      "id": "6c4c8976-0d06-4beb-8ea4-bbf1501f1cc6",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:01.244Z"
+    },
+    {
+      "id": "b6bc2f83-fba3-4c4e-9f2a-edd6c520e699",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:03.786Z"
+    },
+    {
+      "id": "a23b97aa-4017-4f3b-94be-feec45679705",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:07.888Z"
+    },
+    {
+      "id": "0ecc7b78-02a4-4c4e-86a8-3fccbf24309a",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:10.468Z"
+    },
+    {
+      "id": "757f93a3-f97c-4141-9d29-af1fef142ea6",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:16.005Z"
+    },
+    {
+      "id": "f725f8b3-3d2d-45aa-9a01-ea527e9a1b97",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:24.703Z"
+    },
+    {
+      "id": "dade3656-eb27-4b74-a884-ba389971f9e6",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 3,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:52:35.238Z"
+    },
+    {
+      "id": "ffbc19ff-5b01-4d3d-91ee-3e0324850a3a",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/manager.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:52:40.006Z"
+    },
+    {
+      "id": "87214415-0daa-4deb-865a-ab80e9f6f8f7",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:52:45.706Z"
+    },
+    {
+      "id": "0ed88d47-ff9f-4aad-96cd-0b43ca96cfb6",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:52:50.115Z"
+    },
+    {
+      "id": "612a586d-ce95-467f-91dc-d0c45ef2c711",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:52:56.079Z"
+    },
+    {
+      "id": "470934ad-8cf8-4981-8263-5bd9d669294e",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:53:01.437Z"
+    },
+    {
+      "id": "2c4fe224-4d34-4082-8f57-9c34da9856ed",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/manager.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:53:24.162Z"
+    },
+    {
+      "id": "815d3861-71d2-4e9d-8e8f-9b8ea5980a30",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "click",
+      "clickCount": 5,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:53:37.449Z"
+    },
+    {
+      "id": "8ea39102-f33f-46dc-ad9f-6f3ce3cce7f6",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:53:44.201Z"
+    },
+    {
+      "id": "e9644407-3072-4bb2-8171-55db4dd5e0e7",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:53:48.221Z"
+    },
+    {
+      "id": "4df98f63-cb83-4a79-a9af-02d833dcf123",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:53:57.441Z"
+    },
+    {
+      "id": "e04f4ece-d5d6-4333-8fe9-e8726412c7c5",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 4,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:04.998Z"
+    },
+    {
+      "id": "5c1a60a6-d6dc-4f67-819a-b84943deb51c",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 3,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:11.872Z"
+    },
+    {
+      "id": "eb69e7a1-0c08-42c6-b653-7697cd9cac79",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:16.240Z"
+    },
+    {
+      "id": "3e61a166-1106-4966-89c7-f13889251b7d",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:21.091Z"
+    },
+    {
+      "id": "72b95467-e4ae-412e-a014-7001f18b4451",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:29.732Z"
+    },
+    {
+      "id": "2b93bee2-cbde-492b-8cc1-7334a204c0a5",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 3,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:37.142Z"
+    },
+    {
+      "id": "dcd45fa2-993f-4ff7-a38a-e06266d27973",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:41.293Z"
+    },
+    {
+      "id": "3869eeaf-2012-4001-ad0e-63c4b3b69e0f",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:48.032Z"
+    },
+    {
+      "id": "1db15739-53a7-4a8f-89ca-300838ef0a8b",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/super-admin.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:54:54.353Z"
+    },
+    {
+      "id": "cfc4e624-d10c-4a31-a969-0b2f9710f3b9",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 6,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:55:08.608Z"
+    },
+    {
+      "id": "27e24d43-4405-4638-a90d-22df0d7529ba",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:55:18.871Z"
+    },
+    {
+      "id": "b9f3c15e-843d-42bd-ad75-e9223f1350f2",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T00:55:25.010Z"
+    },
+    {
+      "id": "e27b2314-24e3-4b5a-a976-7111ddee70eb",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/manager.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:55:32.643Z"
+    },
+    {
+      "id": "2e210575-ab4f-4696-9704-fa2b98ebb154",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/manager.html",
+      "kind": "click",
+      "clickCount": 2,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:55:40.988Z"
+    },
+    {
+      "id": "cb3b2138-ed25-429b-80ec-0bd705ee5059",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:55:48.194Z"
+    },
+    {
+      "id": "b43fd3ad-770b-4faf-a11a-bfe8ac8ac06e",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html?err=forbidden",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html?err=forbidden",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:57:48.322Z"
+    },
+    {
+      "id": "65663626-5d5e-4b6b-b352-6c5b71ad04f8",
+      "visitorId": "a0d21f53-0d30-4747-87d0-9ddf07752b10",
+      "path": "/portal/login.html?err=forbidden",
+      "kind": "click",
+      "clickCount": 3,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
+      "ip": "::1",
+      "createdAt": "2026-05-18T00:57:55.727Z"
+    },
+    {
+      "id": "23ea7afe-e73e-4af5-8455-442fd19b96fc",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:01.206Z"
+    },
+    {
+      "id": "ca760402-3243-40bf-8bc3-e81a362e7e55",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:06.364Z"
+    },
+    {
+      "id": "548de215-1d63-4681-a680-14dd2675195d",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/super-admin.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/super-admin.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:06.574Z"
+    },
+    {
+      "id": "fd3b3ef3-63e2-49f6-8d45-a5e803678a60",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:10.585Z"
+    },
+    {
+      "id": "1bfe8190-62a8-4b09-8e5c-c40e45970a24",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:15.250Z"
+    },
+    {
+      "id": "28a6c844-cda4-4480-b1d8-687c55e950f4",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:16.645Z"
+    },
+    {
+      "id": "609fccd8-3669-4895-b3a4-4dc4d76520f8",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:20.844Z"
+    },
+    {
+      "id": "1dc25dad-7180-4986-beef-3054da083850",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:29.275Z"
+    },
+    {
+      "id": "1dcdc82d-c5c8-4d25-b5a8-82582b738e2e",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:33.380Z"
+    },
+    {
+      "id": "cba339f5-bd63-4880-9a85-4909a5cfd6d3",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/portal/login.html",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:37.485Z"
+    },
+    {
+      "id": "598623dd-2501-4563-a875-9b889561262b",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/portal/login.html",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:41.402Z"
+    },
+    {
+      "id": "ef19ee34-738b-45ea-b610-b8c6fa79e305",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "pageview",
+      "referrer": "http://localhost:3000/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:42.691Z"
+    },
+    {
+      "id": "53c19cda-c4e6-4543-910e-c14040b49a61",
+      "visitorId": "2f7495c6-e735-478d-a136-7912b8d5e49d",
+      "path": "/",
+      "kind": "click",
+      "clickCount": 1,
+      "referrer": "",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+      "ip": "::ffff:127.0.0.1",
+      "createdAt": "2026-05-18T01:00:46.778Z"
     }
   ],
   "quotes": [
+    {
+      "id": "a6f5932b-3ed7-43c2-8c40-b6866dbddaf5",
+      "timestamp": "2026-05-18T00:48:37.832Z",
+      "status": "new",
+      "name": "Zahid Hasan",
+      "company": "Jydhasan",
+      "phone": "+8801703500404",
+      "email": "patsala181@gmail.com",
+      "service": "NVOCC Shipping",
+      "origin": "Rajshahi",
+      "destination": "Naogoan",
+      "message": "Help",
+      "ip": "::1"
+    },
     {
       "id": "0e2a0337-eab9-4faa-87b8-40b07da01475",
       "timestamp": "2026-05-17T15:26:12.382Z",

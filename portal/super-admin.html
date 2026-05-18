@@ -7,8 +7,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    #auth-gate{position:fixed;inset:0;background:#f0f2f5;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;font-size:1rem;color:#555}
+    #auth-gate .sp{width:34px;height:34px;border:4px solid #ddd;border-top-color:#2563eb;border-radius:50%;animation:sp .7s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    #main-content{display:none}
+  </style>
 </head>
 <body>
+  <div id="auth-gate"><div class="sp"></div><span>Verifying access…</span></div>
+  <div id="main-content">
   <div class="top-strip">
     <strong>SUPER ADMIN</strong>
     <div>
@@ -32,32 +40,24 @@
     <section id="tab-cv" style="display:none"></section>
     <section id="tab-visitors" style="display:none"></section>
   </div>
+  </div><!-- /main-content -->
   <script src="/track.js"></script>
   <script src="common.js"></script>
   <script>
     (async function () {
-      if (!TLL.getToken()) {
-        window.location.href = '/portal/login.html';
-        return;
-      }
-      let me;
-      try {
-        me = await TLL.api('/api/me');
-      } catch {
-        TLL.setToken(null);
-        window.location.href = '/portal/login.html';
-        return;
-      }
-      if (me.user.role !== 'superadmin') {
-        document.getElementById('gate').textContent = 'Super administrators only.';
-        document.getElementById('gate').style.display = 'block';
-        return;
-      }
+      // ── Auth Guard ──────────────────────────────────────────────
+      const me = await TLL.requireAuth(['superadmin']);
+      if (!me) return;
+
+      // ✅ Verified — show page
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+
       let adminUsersPage = 1;
       let userPickerCache = null;
       let adminVisitsPage = 1;
 
-      document.getElementById('who').textContent = me.user.name;
+      document.getElementById('who').textContent = me.name;
       document.getElementById('logout').addEventListener('click', (e) => {
         e.preventDefault();
         TLL.setToken(null);

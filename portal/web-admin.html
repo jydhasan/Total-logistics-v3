@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quote Requests - Admin</title>
+  <title>Web Admin Panel - Total Logistics</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root {
@@ -25,6 +25,35 @@
       color: #333;
       line-height: 1.6;
     }
+
+    /* Auth gate overlay — shown until JWT verified */
+    #auth-gate {
+      position: fixed;
+      inset: 0;
+      background: #f4f6f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    #auth-gate .spinner {
+      width: 36px;
+      height: 36px;
+      border: 4px solid #ddd;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Main content hidden until auth passes */
+    #main-content { display: none; }
 
     .container {
       max-width: 1200px;
@@ -52,7 +81,20 @@
       gap: 10px;
     }
 
-    /* Upload Card */
+    .logout-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
     .upload-card {
       background: white;
       border-radius: 12px;
@@ -73,7 +115,7 @@
       gap: 15px;
     }
 
-    input {
+    input[type="text"] {
       width: 100%;
       padding: 12px 14px;
       border: 1px solid #ddd;
@@ -98,7 +140,6 @@
       transform: translateY(-2px);
     }
 
-    /* Cards Section */
     .quotes-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -127,10 +168,7 @@
       border-bottom: 1px solid #eee;
     }
 
-    .date {
-      font-size: 0.9rem;
-      color: #666;
-    }
+    .date { font-size: 0.9rem; color: #666; }
 
     .status {
       padding: 6px 14px;
@@ -141,10 +179,7 @@
 
     .new { background: #e3f2fd; color: #1565c0; }
 
-    .card-body h3 {
-      margin-bottom: 10px;
-      color: var(--primary);
-    }
+    .card-body h3 { margin-bottom: 10px; color: var(--primary); }
 
     .info-row {
       display: flex;
@@ -153,10 +188,7 @@
       font-size: 0.95rem;
     }
 
-    .info-label {
-      color: #555;
-      font-weight: 500;
-    }
+    .info-label { color: #555; font-weight: 500; }
 
     .route {
       background: #f8f9fa;
@@ -177,77 +209,110 @@
       line-height: 1.5;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quotes-container {
-        grid-template-columns: 1fr;
-      }
-
-      .quote-card {
-        margin-bottom: 15px;
-      }
+      .form-grid { grid-template-columns: 1fr; }
+      .quotes-container { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 480px) {
-      .container {
-        padding: 10px;
-      }
-    }
-
-    .success-msg {
-      color: var(--success);
-      font-weight: bold;
-      margin-top: 10px;
-    }
+    .success-msg { color: var(--success); font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <!-- Auth gate: visible until JWT verified -->
+  <div id="auth-gate">
+    <div class="spinner"></div>
+    <span>Verifying access…</span>
+  </div>
 
-    <!-- Header -->
-    <header>
-      <h1><i class="fas fa-user-shield"></i> Admin Panel</h1>
-      <div>
-        <span style="opacity:0.9; font-size:0.95rem;">Welcome, Admin</span>
+  <!-- Main content: hidden until auth passes -->
+  <div id="main-content">
+    <div class="container">
+
+      <header>
+        <h1><i class="fas fa-user-shield"></i> Admin Panel</h1>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span id="who" style="opacity:0.9; font-size:0.95rem;"></span>
+          <a href="#" id="logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </header>
+
+      <!-- Upload Section -->
+      <div class="upload-card">
+        <h2><i class="fas fa-upload"></i> Add Shipment Data</h2>
+        <div class="form-grid">
+          <input type="text" id="tracking_number" placeholder="Tracking Number">
+          <input type="text" id="description" placeholder="Description">
+        </div>
+        <button onclick="submitData()">
+          <i class="fas fa-cloud-upload-alt"></i> Upload Data
+        </button>
+        <p id="msg" class="success-msg"></p>
       </div>
-    </header>
 
-    <!-- Upload Section -->
-    <div class="upload-card">
-      <h2><i class="fas fa-upload"></i> Add Shipment Data</h2>
-      <div class="form-grid">
-        <input type="text" id="tracking_number" placeholder="Tracking Number">
-        <input type="text" id="description" placeholder="Description">
+      <!-- Quotes Section -->
+      <div class="table-header" style="margin-bottom: 20px; background: var(--primary); color: white; padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <h2><i class="fas fa-envelope"></i> All Quote Requests</h2>
+        <button class="refresh-btn" onclick="loadQuotes()" style="background: var(--accent); border: none; padding: 10px 18px; border-radius: 8px; color: white; cursor: pointer; margin-top:0;">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
       </div>
-      <button onclick="submitData()">
-        <i class="fas fa-cloud-upload-alt"></i> Upload Data
-      </button>
-      <p id="msg" class="success-msg"></p>
-    </div>
 
-    <!-- Quotes Section -->
-    <div class="table-header" style="margin-bottom: 20px; background: var(--primary); color: white; padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-      <h2><i class="fas fa-envelope"></i> All Quote Requests</h2>
-      <button class="refresh-btn" onclick="loadQuotes()" style="background: var(--accent); border: none; padding: 10px 18px; border-radius: 8px; color: white; cursor: pointer;">
-        <i class="fas fa-sync"></i> Refresh
-      </button>
-    </div>
-
-    <div class="quotes-container" id="quotesContainer">
-      <!-- Cards will be injected here by JavaScript -->
+      <div class="quotes-container" id="quotesContainer"></div>
     </div>
   </div>
 
+  <script src="common.js"></script>
   <script>
+    // ── Auth Guard ──────────────────────────────────────────────────
+    // Runs immediately. Page content stays hidden until token is
+    // verified server-side AND role is webadmin or superadmin.
+    (async function authGuard() {
+      const gate = document.getElementById('auth-gate');
+
+      if (!TLL.getToken()) {
+        window.location.replace('/portal/login.html');
+        return;
+      }
+
+      let me;
+      try {
+        me = await TLL.api('/api/me');
+      } catch (err) {
+        // Invalid / expired token
+        TLL.setToken(null);
+        window.location.replace('/portal/login.html');
+        return;
+      }
+
+      if (me.user.role !== 'webadmin' && me.user.role !== 'superadmin') {
+        // Authenticated but wrong role — send back to login with message
+        TLL.setToken(null);
+        window.location.replace('/portal/login.html?err=forbidden');
+        return;
+      }
+
+      // ✅ Auth passed — show content, hide gate
+      document.getElementById('who').textContent = me.user.name + ' (' + me.user.role + ')';
+      document.getElementById('main-content').style.display = 'block';
+      gate.style.display = 'none';
+
+      document.getElementById('logout').addEventListener('click', function (e) {
+        e.preventDefault();
+        TLL.setToken(null);
+        window.location.href = '/portal/login.html';
+      });
+
+      // Load quotes now that auth is confirmed
+      loadQuotes();
+    })();
+
+    // ── Quotes ─────────────────────────────────────────────────────
     async function loadQuotes() {
       try {
-        const response = await fetch('/api/quotes');
-        const quotes = await response.json();
+        // Use authenticated API call (sends Bearer token)
+        const data = await TLL.api('/api/quotes');
+        const quotes = Array.isArray(data) ? data : (data.quotes || []);
 
         const container = document.getElementById('quotesContainer');
         container.innerHTML = '';
@@ -271,34 +336,28 @@
                 <div class="date"><i class="fas fa-clock"></i> ${date}</div>
                 <span class="status new">New</span>
               </div>
-
               <div class="card-body">
-                <h3>${q.name}</h3>
-                
-                ${q.company ? `<p style="color:#555; margin-bottom:8px;"><strong>Company:</strong> ${q.company}</p>` : ''}
-
+                <h3>${escHtml(q.name)}</h3>
+                ${q.company ? `<p style="color:#555; margin-bottom:8px;"><strong>Company:</strong> ${escHtml(q.company)}</p>` : ''}
                 <div class="info-row">
                   <span class="info-label">📞 Phone</span>
-                  <span>${q.phone}</span>
+                  <span>${escHtml(q.phone)}</span>
                 </div>
                 <div class="info-row">
                   <span class="info-label">✉️ Email</span>
-                  <span>${q.email}</span>
+                  <span>${escHtml(q.email)}</span>
                 </div>
-
                 <div class="info-row">
                   <span class="info-label">Service</span>
-                  <span><strong>${q.service}</strong></span>
+                  <span><strong>${escHtml(q.service)}</strong></span>
                 </div>
-
                 <div class="route">
-                  ${q.origin || 'N/A'} <i class="fas fa-arrow-right"></i> ${q.destination || 'N/A'}
+                  ${escHtml(q.origin || 'N/A')} <i class="fas fa-arrow-right"></i> ${escHtml(q.destination || 'N/A')}
                 </div>
-
                 ${q.message ? `
                 <div class="message">
                   <strong>Message:</strong><br>
-                  ${q.message}
+                  ${escHtml(q.message)}
                 </div>` : ''}
               </div>
             </div>
@@ -309,7 +368,12 @@
 
       } catch (err) {
         console.error(err);
-        alert("Failed to load data. Make sure the server is running.");
+        if (err.status === 401 || err.status === 403) {
+          TLL.setToken(null);
+          window.location.replace('/portal/login.html');
+        } else {
+          alert("Failed to load data. Make sure the server is running.");
+        }
       }
     }
 
@@ -324,27 +388,29 @@
         return;
       }
 
-      const res = await fetch("http://localhost:3000/api/shipment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await TLL.api('/api/shipment', {
+          method: 'POST',
+          body: data
+        });
 
-      const msgEl = document.getElementById("msg");
-
-      if (res.ok) {
+        const msgEl = document.getElementById("msg");
         msgEl.innerHTML = `✅ Uploaded Successfully`;
         document.getElementById("tracking_number").value = '';
         document.getElementById("description").value = '';
-      } else {
-        msgEl.innerHTML = `❌ Upload Failed`;
+        setTimeout(() => msgEl.innerHTML = '', 5000);
+      } catch (err) {
+        document.getElementById("msg").innerHTML = `❌ Upload Failed`;
       }
-
-      setTimeout(() => msgEl.innerHTML = '', 5000);
     }
 
-    // Load data when page opens
-    window.onload = loadQuotes;
+    function escHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
   </script>
 </body>
 </html>

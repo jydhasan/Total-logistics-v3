@@ -6,8 +6,16 @@
   <title>Manager Dashboard — Total Logistics</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    #auth-gate{position:fixed;inset:0;background:#f0f2f5;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;font-size:1rem;color:#555}
+    #auth-gate .sp{width:34px;height:34px;border:4px solid #ddd;border-top-color:#2563eb;border-radius:50%;animation:sp .7s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    #main-content{display:none}
+  </style>
 </head>
 <body>
+  <div id="auth-gate"><div class="sp"></div><span>Verifying access…</span></div>
+  <div id="main-content">
   <script src="/track.js"></script>
   <div class="top-strip">
     <strong>MANAGER DASHBOARD</strong>
@@ -26,27 +34,19 @@
     <section id="tab-ship"></section>
     <section id="tab-msg" style="display:none"></section>
   </div>
+  </div><!-- /main-content -->
   <script src="common.js"></script>
   <script>
     (async function () {
-      if (!TLL.getToken()) {
-        window.location.href = '/portal/login.html';
-        return;
-      }
-      let me;
-      try {
-        me = await TLL.api('/api/me');
-      } catch {
-        TLL.setToken(null);
-        window.location.href = '/portal/login.html';
-        return;
-      }
-      if (me.user.role !== 'manager') {
-        document.getElementById('gate').textContent = 'Managers only.';
-        document.getElementById('gate').style.display = 'block';
-        return;
-      }
-      document.getElementById('who').textContent = me.user.name;
+      // ── Auth Guard ──────────────────────────────────────────────
+      const me = await TLL.requireAuth(['manager']);
+      if (!me) return;
+
+      // ✅ Verified — show page
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+
+      document.getElementById('who').textContent = me.name;
       document.getElementById('logout').addEventListener('click', (e) => {
         e.preventDefault();
         TLL.setToken(null);
@@ -151,15 +151,6 @@
         });
       }
 
-      let clients = [];
-      async function loadClients() {
-        const d = await TLL.api('/api/manager/clients');
-        clients = d.clients;
-        const sel = document.getElementById('clientSel');
-        if (!sel) return;
-        sel.innerHTML = '<option value="">Select client…</option>' + clients.map((c) => `<option value="${c.id}">${c.name} (${c.email})</option>`).join('');
-      }
-
       async function loadMsgPanel() {
         const el = document.getElementById('tab-msg');
         el.innerHTML = `<div class="card"><label for="clientSel">Client</label><select id="clientSel"></select><div id="thread" style="margin-top:16px"></div></div>`;
@@ -175,7 +166,7 @@
           const { messages, client } = await TLL.api('/api/manager/messages?clientId=' + encodeURIComponent(cid));
           const bubbles = messages
             .map((m) => {
-              const mine = m.senderId === me.user.id;
+              const mine = m.senderId === me.id;
               const file =
                 m.filePath &&
                 `<div style="margin-top:8px"><a href="/${m.filePath}" target="_blank" rel="noopener">📎 ${m.fileName || 'Attachment'}</a></div>`;
